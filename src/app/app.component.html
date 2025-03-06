@@ -1,1 +1,14 @@
-<router-outlet></router-outlet>
+<mat-sidenav-container>
+
+    <mat-sidenav opened mode="side">
+        <button mat-icon-button>
+            <mat-icon>menu</mat-icon>
+        </button>
+        <app-sidebar-content></app-sidebar-content>
+    </mat-sidenav>
+
+    <mat-sidenav-content>
+        <router-outlet></router-outlet>
+    </mat-sidenav-content>
+
+</mat-sidenav-container>

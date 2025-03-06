@@ -1,8 +1,7 @@
 # Edukační aplikace pro gramatické jevy v českém jazyce
 
-#### GitHub Pages: https://tucnuc.github.io/Czech-Education-App/
+### GitHub Pages: https://tucnuc.github.io/Czech-Education-App/
 
----
 ---
 
 This project was generated using [Angular CLI](https://github.com/angular/angular-cli) version 19.0.2.
