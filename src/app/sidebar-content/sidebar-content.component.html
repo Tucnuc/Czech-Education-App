@@ -5,4 +5,16 @@
             <span matListItemTitle>{{ item.label }}</span>
         </a>
     }
+    <div class="profileContainer">
+        <div class="profile">
+            <img [src]="profilePicture" class="profileImg" alt="profile image"/>
+            <div class="textContainer">
+                <h3>{{ profileName }}</h3>
+                <p>Úroveň: {{ profileRank }}</p>
+            </div>
+        </div>
+        <button mat-icon-button>
+            <mat-icon>{{ (loggedIn) ? 'logout' : 'login'}}</mat-icon>
+        </button>
+    </div>
 </mat-nav-list>
