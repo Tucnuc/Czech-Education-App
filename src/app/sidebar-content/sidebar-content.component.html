@@ -1,14 +1,22 @@
 <mat-nav-list>
     @for (item of menuItems(); track $index) {
-        <a mat-list-item>
+        <a
+          mat-list-item
+          [routerLink]="item.route"
+          routerLinkActive
+          #rla="routerLinkActive"
+          [activated]="rla.isActive"
+        >
             <mat-icon matListItemIcon>{{ item.icon }}</mat-icon>
-            <span matListItemTitle>{{ item.label }}</span>
+            @if (!sidebarCollapsed()) {
+                <span matListItemTitle>{{ item.label }}</span>
+            }
         </a>
     }
-    <div class="profileContainer">
+    <div class="profileContainer" [class.hideProfile]="sidebarCollapsed()">
         <div class="profile">
-            <img [src]="profilePicture" class="profileImg" alt="profile image"/>
-            <div class="textContainer">
+            <img [src]="profilePicture" [width]="profilePicSize()" [height]="profilePicSize()" class="profileImg" alt="profile image"/>
+            <div class="textContainer" [class.hideText]="sidebarCollapsed()">
                 <h3>{{ profileName }}</h3>
                 <p>Úroveň: {{ profileRank }}</p>
             </div>

@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, computed, signal } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { MatButtonModule } from '@angular/material/button';
@@ -17,4 +17,8 @@ import { SidebarContentComponent } from './sidebar-content/sidebar-content.compo
 })
 export class AppComponent {
   title = 'cestina';
+
+  collapsed = signal(false);
+
+  sidebarWidth = computed(() => this.collapsed() ? '65px' : '275px')
 }

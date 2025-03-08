@@ -1,16 +1,16 @@
 <mat-sidenav-container>
 
-    <mat-sidenav opened mode="side">
+    <mat-sidenav opened mode="side" [style.width]="sidebarWidth()">
         <div class="headerContainer">
-            <h2>Praotec Čech</h2>
-            <button mat-icon-button>
+            <h2 [class.hideText]="collapsed()">Praotec Čech</h2>
+            <button mat-icon-button (click)="collapsed.set(!collapsed())">
                 <mat-icon>menu</mat-icon>
             </button>
         </div>
-        <app-sidebar-content></app-sidebar-content>
+        <app-sidebar-content [collapsed]="collapsed()"></app-sidebar-content>
     </mat-sidenav>
 
-    <mat-sidenav-content>
+    <mat-sidenav-content [style.margin-left]="sidebarWidth()">
         <router-outlet></router-outlet>
     </mat-sidenav-content>
 
