@@ -1,5 +1,9 @@
 @use '@angular/material' as mat;
 
+:host * {
+  transition: all 500ms ease-in-out;
+}
+
 mat-sidenav {
   @include mat.elevation(3);
   border-radius: 0;
@@ -11,6 +15,8 @@ mat-sidenav-container {
 
 h2 {
   margin: 0;
+  height: 28.667px;
+  text-wrap: nowrap;
 }
 
 .headerContainer {
@@ -22,5 +28,11 @@ h2 {
 }
 
 .hideText {
-  display: none;
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
+mat-sidenav, mat-sidenav-content {
+  transition: all 500ms ease-in-out !important;
 }

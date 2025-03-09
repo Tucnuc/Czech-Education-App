@@ -14,7 +14,7 @@
         </a>
     }
     <div class="profileContainer" [class.hideProfile]="sidebarCollapsed()">
-        <div class="profile">
+        <div class="profile" [class.hideText]="sidebarCollapsed()">
             <img [src]="profilePicture" [width]="profilePicSize()" [height]="profilePicSize()" class="profileImg" alt="profile image"/>
             <div class="textContainer" [class.hideText]="sidebarCollapsed()">
                 <h3>{{ profileName }}</h3>

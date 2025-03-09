@@ -5,12 +5,13 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatSidenavModule } from '@angular/material/sidenav';
 import { SidebarContentComponent } from './sidebar-content/sidebar-content.component';
+import { NgStyle } from '@angular/common';
 
 @Component({
   selector: 'app-root',
   imports: [
     RouterOutlet, MatToolbarModule, MatButtonModule, MatIconModule, MatSidenavModule,
-    SidebarContentComponent
+    SidebarContentComponent, NgStyle
   ],
   templateUrl: './app.component.html',
   styleUrl: './app.component.scss'
