@@ -1,5 +1,6 @@
 import { Component, computed, signal } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
+import { trigger, state, style, animate, transition } from '@angular/animations';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
@@ -14,7 +15,14 @@ import { NgStyle } from '@angular/common';
     SidebarContentComponent, NgStyle
   ],
   templateUrl: './app.component.html',
-  styleUrl: './app.component.scss'
+  styleUrl: './app.component.scss',
+  animations: [
+    trigger('fading', [
+      state('collapsed', style({ display: 'none', opacity: 0 })),
+      state('expanded', style({ display: 'block', opacity: 1 })),
+      transition('collapsed => expanded', [animate('500ms ease-in-out')]),
+    ]),
+  ]
 })
 export class AppComponent {
   title = 'cestina';

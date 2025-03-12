@@ -2,8 +2,8 @@
 
     <mat-sidenav opened mode="side" [style.width]="sidebarWidth()">
         <div class="headerContainer" [ngStyle]="{'justify-content': (collapsed()) ? 'center' : 'space-around'}">
-            <h2 [class.hideText]="collapsed()">Praotec Čech</h2>
-            <button mat-icon-button (click)="collapsed.set(!collapsed())">
+            <h2 [@fading]="(collapsed()) ? 'collapsed' : 'expanded'" [class.hideText]="collapsed()">Praotec Čech</h2>
+            <button class="sidebarBtn" mat-icon-button (click)="collapsed.set(!collapsed())">
                 <mat-icon>menu</mat-icon>
             </button>
         </div>

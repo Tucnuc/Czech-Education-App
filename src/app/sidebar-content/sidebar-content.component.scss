@@ -20,6 +20,7 @@ a {
     padding-block: 7.5px;
     border-radius: 10px;
     height: 60px;
+    overflow: hidden;
 }
 
 .profile {
@@ -30,6 +31,8 @@ a {
 img {
     border-radius: 100vh;
     object-fit: cover;
+    width: 60px;
+    height: 60px;
 }
 
 .textContainer {
@@ -50,12 +53,6 @@ p {
     margin-top: 2.5px;
     font-weight: 500;
 }
-
-.hideText {
-    opacity: 0;
-    width: 0;
-}
-
 
 .hideProfile {
     display: flex;

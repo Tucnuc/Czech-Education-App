@@ -1,4 +1,6 @@
+import { NgStyle } from '@angular/common';
 import { Component, computed, Input, signal } from '@angular/core';
+import { trigger, state, style, animate, transition } from '@angular/animations';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatListModule } from '@angular/material/list'
@@ -12,9 +14,16 @@ export type MenuItem = {
 
 @Component({
   selector: 'app-sidebar-content',
-  imports: [MatListModule, MatIconModule, MatButtonModule, RouterModule],
+  imports: [MatListModule, MatIconModule, MatButtonModule, RouterModule, NgStyle],
   templateUrl: './sidebar-content.component.html',
-  styleUrl: './sidebar-content.component.scss'
+  styleUrl: './sidebar-content.component.scss',
+  animations: [
+    trigger('fading', [
+      state('collapsed', style({ display: 'none', opacity: 0 })),
+      state('expanded', style({ display: 'flex', opacity: 1 })),
+      transition('collapsed => expanded', [animate('500ms ease-in-out')]),
+    ]),
+  ]
 })
 export class SidebarContentComponent {
 
@@ -55,6 +64,4 @@ export class SidebarContentComponent {
       route: 'settings',
     },
   ]);
-
-  profilePicSize = computed(() => this.sidebarCollapsed() ? '0' : '60')
 }

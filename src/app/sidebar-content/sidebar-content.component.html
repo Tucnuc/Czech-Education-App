@@ -7,22 +7,22 @@
           #rla="routerLinkActive"
           [activated]="rla.isActive"
         >
-            <mat-icon matListItemIcon>{{ item.icon }}</mat-icon>
+            <mat-icon [ngStyle]="{'margin-left': (sidebarCollapsed()) ? '20px' : '16px'}" matListItemIcon>{{ item.icon }}</mat-icon>
             @if (!sidebarCollapsed()) {
                 <span matListItemTitle>{{ item.label }}</span>
             }
         </a>
     }
     <div class="profileContainer" [class.hideProfile]="sidebarCollapsed()">
-        <div class="profile" [class.hideText]="sidebarCollapsed()">
-            <img [src]="profilePicture" [width]="profilePicSize()" [height]="profilePicSize()" class="profileImg" alt="profile image"/>
-            <div class="textContainer" [class.hideText]="sidebarCollapsed()">
+        <div class="profile" [@fading]="(sidebarCollapsed()) ? 'collapsed' : 'expanded'">
+            <img [src]="profilePicture" class="profileImg" alt="profile image"/>
+            <div class="textContainer">
                 <h3>{{ profileName }}</h3>
                 <p>Úroveň: {{ profileRank }}</p>
             </div>
         </div>
         <button mat-icon-button>
-            <mat-icon>{{ (loggedIn) ? 'logout' : 'login'}}</mat-icon>
+            <mat-icon>{{ (loggedIn) ? 'logout' : 'login' }}</mat-icon>
         </button>
     </div>
 </mat-nav-list>

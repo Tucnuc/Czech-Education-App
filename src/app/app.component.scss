@@ -1,9 +1,5 @@
 @use '@angular/material' as mat;
 
-:host * {
-  transition: all 500ms ease-in-out;
-}
-
 mat-sidenav {
   @include mat.elevation(3);
   border-radius: 0;
@@ -36,3 +32,7 @@ h2 {
 mat-sidenav, mat-sidenav-content {
   transition: all 500ms ease-in-out !important;
 }
+
+// .sidebarBtn {
+//   margin-left: 50px;
+// }
