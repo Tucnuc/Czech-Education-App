@@ -1,0 +1,19 @@
+<div class="container">
+    <h1 class="otherH1">Mód:</h1>
+    <div class="modeContainer">
+        @for (btn of modeBtns(); track $index) {
+            <div class="button" [ngClass]="{'activeBtn': btn.selected}"
+            (click)="selectMode($index)">{{ btn.name }}</div>
+        }
+    </div>
+    <h1>Obtížnost:</h1>
+    <div class="diffContainer">
+        @for (btn of diffBtns(); track $index) {
+            <div class="button diffBtn" [ngClass]="{'activeBtn': btn.selected, 'disabledBtn': !modeBtns()[0].selected}"
+            (click)="selectDifficulty($index)">{{ btn.name }}</div>
+        }
+    </div>
+    <button mat-icon-button class="nextBtn">
+        <mat-icon>subdirectory_arrow_right</mat-icon>
+    </button>
+</div>

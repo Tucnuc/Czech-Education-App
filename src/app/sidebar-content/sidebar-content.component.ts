@@ -51,12 +51,12 @@ export class SidebarContentComponent {
     {
       icon: 'text_fields',
       label: 'Slovní Druhy',
-      route: 'test',
+      route: 'slovni-druhy',
     },
     {
       icon: 'category',
       label: 'Mluvnické Kategorie',
-      route: 'test',
+      route: 'kategorie',
     },
     {
       icon: 'settings',

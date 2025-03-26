@@ -1,0 +1,70 @@
+@use '@angular/material' as mat;
+
+.container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 100%;
+    gap: 30px;
+}
+
+.button {
+    width: 200px;
+    height: 100px;
+    border: solid var(--mat-sys-outline-variant) 2px;
+    border-radius: 10px;
+    cursor: pointer;
+    transition: 200ms ease-in-out;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-weight: 500;
+    font-size: 25px;
+}
+.diffBtn {
+    width: 180px;
+    height: 90px;
+    font-size: 23px;
+}
+.activeBtn {
+    border: solid var(--mat-sys-primary) 2px !important;
+}
+
+.button:hover {
+    border: solid var(--mat-sys-secondary) 2px;
+}
+
+.modeContainer, .diffContainer {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 20px;
+}
+
+.mat-icon, .nextBtn{
+    font-size: 60px;
+    width: 60px;
+    height: 60px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.mat-icon {
+    padding-left: 10px;
+}
+
+h1 {
+    margin-top: 20px;
+    margin-bottom: 0;
+}
+.otherH1 {
+    margin-top: 0;
+}
+
+.disabledBtn {
+    cursor: not-allowed;
+    border: solid var(--mat-sys-outline-variant) 2px !important;
+    background-color: #dddddd;
+}
