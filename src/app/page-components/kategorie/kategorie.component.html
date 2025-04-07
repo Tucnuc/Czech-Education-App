@@ -1,1 +1,15 @@
-<app-choice-btns></app-choice-btns>
+@if (isReady) {
+    <div class="container">
+        <div class="sentenceCon">
+            @for (word of wordsArray; track $index) {
+                <div class="wordCon">
+                    <input class="doplnPole" [ngClass]="{ 'reverse': $index % 2 === 1 }">
+                    <p>{{ wordsArray[$index] }}</p>
+                </div>
+            }
+        </div>
+    </div>
+}
+@else {
+    <app-choice-btns></app-choice-btns>
+}

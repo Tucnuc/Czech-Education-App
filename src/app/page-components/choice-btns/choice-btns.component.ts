@@ -3,6 +3,7 @@ import { Component, signal } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
+import { SharedService } from '../../shared/shared.service';
 
 export type choiceBtn = {
   name: string;
@@ -17,6 +18,10 @@ export type choiceBtn = {
   styleUrl: './choice-btns.component.scss'
 })
 export class ChoiceBtnsComponent {
+  constructor(private shared:SharedService) { }
+
+  currentPage: string = 'slovniDruhy';
+
   modeBtns = signal<choiceBtn[]>([
     { name: 'Procvičování', id: 'preset', selected: false },
     { name: 'Vlastní zadání', id: 'custom', selected: false },
@@ -43,6 +48,27 @@ export class ChoiceBtnsComponent {
       this.diffBtns.update((btns) =>
         btns.map((btn, i) => ({ ...btn, selected: i === index }))
       );
+    }
+  }
+
+  choosingFinished() {
+    const modeBtn: choiceBtn | undefined = this.modeBtns().find((btn) => btn.selected);
+    const diffBtn: choiceBtn | undefined = this.diffBtns().find((btn) => btn.selected);
+    if (modeBtn) {
+      switch(modeBtn.id) {
+        case 'preset':
+          if (diffBtn) {
+            this.shared.setData(this.currentPage, 'mode', modeBtn.id);
+            this.shared.setData(this.currentPage, 'difficulty', diffBtn.id);
+            this.shared.setData(this.currentPage, 'ready', true);
+          }
+          break;
+
+        case 'custom':
+          this.shared.setData(this.currentPage, 'mode', modeBtn.id);
+          this.shared.setData(this.currentPage, 'ready', true);
+          break;
+      }
     }
   }
 }

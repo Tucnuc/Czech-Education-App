@@ -1,0 +1,51 @@
+@use '@angular/material' as mat;
+
+.container {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 100%;
+    width: 100%;
+}
+
+.sentenceCon {
+    display: flex;
+    justify-content: center;
+    gap: 8px;
+}
+
+.wordCon {
+    font-size: 30px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+p {
+    margin-block: 15px;
+    user-select: none;
+}
+
+.doplnPole {
+    width: 80px;
+    height: 40px;
+    border-radius: 5px;
+    border: solid var(--mat-sys-outline-variant) 2px;
+    transition: 100ms ease-in-out;
+    font-size: 22px;
+    text-align: center;
+    position: absolute;
+    margin-bottom: 120px;
+}
+.doplnPole:hover {
+    border: solid var(--mat-sys-secondary) 2px;
+}
+.doplnPole:focus {
+    border: solid var(--mat-sys-primary) 2px !important;
+    outline: none;
+}
+
+.reverse {
+    margin-top: 240px;
+}
