@@ -1,10 +1,9 @@
 import { Component } from '@angular/core';
 import { ChoiceBtnsComponent } from '../choice-btns/choice-btns.component';
-import { NgClass } from '@angular/common';
 
 @Component({
   selector: 'app-kategorie',
-  imports: [ChoiceBtnsComponent, NgClass],
+  imports: [ChoiceBtnsComponent],
   templateUrl: './kategorie.component.html',
   styleUrl: './kategorie.component.scss'
 })
