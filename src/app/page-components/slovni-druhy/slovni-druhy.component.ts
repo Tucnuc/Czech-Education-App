@@ -1,26 +1,33 @@
-import { Component } from '@angular/core';
+import { Component, effect, signal } from '@angular/core';
 import { ChoiceBtnsComponent } from '../choice-btns/choice-btns.component';
 import { SharedService } from '../../shared/shared.service';
-
-export type choiceBtn = {
-  name: string;
-  id: string;
-  selected: boolean;
-}
+import { EasyComponent } from './easy/easy.component';
+import { NormalComponent } from './normal/normal.component';
+import { HardComponent } from './hard/hard.component';
+import { CustomComponent } from './custom/custom.component';
 
 @Component({
   selector: 'app-slovni-druhy',
-  imports: [ChoiceBtnsComponent],
+  imports: [
+    ChoiceBtnsComponent,
+    EasyComponent, NormalComponent, HardComponent, CustomComponent
+  ],
   templateUrl: './slovni-druhy.component.html',
   styleUrl: './slovni-druhy.component.scss'
 })
 export class SlovniDruhyComponent {
-  constructor(public shared:SharedService) { }
+  isReady = signal(false);
+  mode = '';
 
-  get isReady(): boolean {
-    const slovniDruhy = this.shared.database().find(item => item.id === 'slovniDruhy');
-    return slovniDruhy?.ready || false;
+  constructor(public shared:SharedService) {
+    effect(() => {
+      const slovniDruhy = this.shared.database().find(item => item.id === 'slovniDruhy');
+      this.isReady.set(slovniDruhy?.ready || false);
+
+      if (this.isReady()) {
+        this.mode = (shared.getData('slovniDruhy', 'mode') as string | undefined) ?? '';
+      }
+    });
   }
 
-  presetVeta = 'Kočka leze dírou, pes oknem.';
 }

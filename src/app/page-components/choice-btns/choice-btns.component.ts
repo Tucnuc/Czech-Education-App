@@ -58,8 +58,7 @@ export class ChoiceBtnsComponent {
       switch(modeBtn.id) {
         case 'preset':
           if (diffBtn) {
-            this.shared.setData(this.currentPage, 'mode', modeBtn.id);
-            this.shared.setData(this.currentPage, 'difficulty', diffBtn.id);
+            this.shared.setData(this.currentPage, 'mode', diffBtn.id);
             this.shared.setData(this.currentPage, 'ready', true);
           }
           break;

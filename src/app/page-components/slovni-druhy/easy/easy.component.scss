@@ -1,0 +1,76 @@
+@use '@angular/material' as mat;
+
+.container {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 100%;
+    width: 100%;
+}
+
+.sentenceCon {
+    display: flex;
+    justify-content: center;
+    gap: 8px;
+}
+
+.wordCon {
+    font-size: 30px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+}
+
+p {
+    margin-block: 15px;
+    user-select: none;
+    transition: 100ms ease-in-out;
+}
+
+.druhCon {
+    position: absolute;
+    display: flex;
+    justify-content: center;
+    width: 100%;
+    gap: 15px;
+    bottom: 0;
+    margin-bottom: 50px;
+    user-select: none;
+    font-weight: 500;
+    font-size: 20px;
+}
+
+.druh {
+    padding-inline: 15px;
+    padding-block: 10px;
+    border-radius: 10px;
+    cursor: pointer;
+    color: white;
+    transition: 100ms ease-in-out;
+    border: 2px solid transparent;
+}
+
+.druh:hover {
+    border: solid black 2px;
+}
+
+.activeDruh {
+    border: solid black 2px
+}
+
+.cursor {
+    width: 25px;
+    height: 25px;
+    border-radius: 100vh;
+    position: absolute;
+    background-color: transparent;
+    pointer-events: none;
+}
+
+.cursorCon {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+}

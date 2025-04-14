@@ -1,5 +1,11 @@
-@if (isReady) {
-    Hello World!
+@if (isReady()) {
+    @switch (mode) {
+        @case ("easy") { <app-easy></app-easy> }
+        @case ("normal") { <app-normal></app-normal> }
+        @case ("hard") { <app-hard></app-hard> }
+        @case ("custom") { <app-custom></app-custom> }
+        @default { Something's wrong here. }
+    }
 }
 @else {
     <app-choice-btns></app-choice-btns>

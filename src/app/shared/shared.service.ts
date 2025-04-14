@@ -3,7 +3,6 @@ import { Injectable, signal } from '@angular/core';
 export type databaseItem = {
   id: string;
   mode: string;
-  difficulty: string;
   ready: boolean;
 }
 
@@ -17,13 +16,11 @@ export class SharedService {
     {
       id: 'slovniDruhy',
       mode: '',
-      difficulty: '',
       ready: false
     },
     {
       id: 'mluvKategorie',
       mode: '',
-      difficulty: '',
       ready: false
     }
   ])
