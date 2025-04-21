@@ -1,18 +1,18 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { EasyComponent } from './easy.component';
+import { ChoiceBtns2Component } from './choice-btns2.component';
 
-describe('EasyComponent', () => {
-  let component: EasyComponent;
-  let fixture: ComponentFixture<EasyComponent>;
+describe('ChoiceBtns2Component', () => {
+  let component: ChoiceBtns2Component;
+  let fixture: ComponentFixture<ChoiceBtns2Component>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [EasyComponent]
+      imports: [ChoiceBtns2Component]
     })
     .compileComponents();
 
-    fixture = TestBed.createComponent(EasyComponent);
+    fixture = TestBed.createComponent(ChoiceBtns2Component);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

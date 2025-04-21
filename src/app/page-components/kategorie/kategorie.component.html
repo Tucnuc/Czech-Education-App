@@ -1,15 +1,12 @@
-@if (isReady) {
-    <div class="container">
-        <div class="sentenceCon">
-            @for (word of wordsArray; track $index) {
-                <div class="wordCon">
-                    <input class="doplnPole">
-                    <p>{{ wordsArray[$index] }}</p>
-                </div>
-            }
-        </div>
-    </div>
+@if (isReady()) {
+    @switch (mode) {
+        @case ("easy") { <app-easy2></app-easy2> }
+        @case ("normal") { <app-normal2></app-normal2> }
+        @case ("hard") { <app-hard2></app-hard2> }
+        @case ("custom") { <app-custom2></app-custom2> }
+        @default { Something's wrong here. }
+    }
 }
 @else {
-    <app-choice-btns></app-choice-btns>
+    <app-choice-btns2 (event)="receiveEvent($event)"></app-choice-btns2>
 }

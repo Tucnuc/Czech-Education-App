@@ -1,13 +1,3 @@
-<div class="druhCon">
-    @for (druh of druhy(); track $index) {
-        <div
-            (click)="druhVybrani($index)" class="druh"
-            [ngClass]="{'activeDruh': druh.selected}" [style.backgroundColor]="druh.color">
-            {{ druh.viewValue }}
-        </div>
-    }
-</div>
-
 <div class="container" (mousemove)="onMouseMove($event)">
     <div class="cursor" [ngStyle]="{
             top: cursorPosition().top,
@@ -19,6 +9,15 @@
         @for (word of wordsArray(); track $index) {
             <div class="wordCon" (click)="obarvitSlovo($index)" [style.color]="word.color">
                 <p>{{ word.value }}</p>
+            </div>
+        }
+    </div>
+    <div class="druhCon">
+        @for (druh of druhy(); track $index) {
+            <div
+                (click)="druhVybrani($index)" class="druh"
+                [ngClass]="{'activeDruh': druh.selected}" [style.backgroundColor]="druh.color">
+                {{ druh.viewValue }}
             </div>
         }
     </div>

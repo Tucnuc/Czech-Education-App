@@ -67,6 +67,7 @@ p {
     position: absolute;
     background-color: transparent;
     pointer-events: none;
+    z-index: 1000;
 }
 
 .cursorCon {

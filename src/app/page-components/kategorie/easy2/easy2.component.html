@@ -1,0 +1,9 @@
+<div class="container">
+    <div class="sentenceCon">
+        @for (word of wordsArray(); track $index) {
+            <div class="wordCon" [ngClass]="{ 'selectableWord': word.type === 1 }">
+                <p>{{ word.value }}</p>
+            </div>
+        }
+    </div>
+</div>

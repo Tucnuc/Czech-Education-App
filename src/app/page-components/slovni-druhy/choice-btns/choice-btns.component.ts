@@ -1,9 +1,7 @@
 import { NgClass } from '@angular/common';
-import { Component, signal } from '@angular/core';
+import { Component, signal, Output, EventEmitter } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
-import { MatInputModule } from '@angular/material/input';
-import { SharedService } from '../../shared/shared.service';
 
 export type choiceBtn = {
   name: string;
@@ -11,17 +9,20 @@ export type choiceBtn = {
   selected: boolean;
 }
 
+export type eventArray = {
+  mode: string;
+  ready: boolean;
+}
+
 @Component({
   selector: 'app-choice-btns',
-  imports: [MatInputModule, MatButtonModule, MatIconModule, NgClass],
+  imports: [MatButtonModule, MatIconModule, NgClass],
   templateUrl: './choice-btns.component.html',
   styleUrl: './choice-btns.component.scss'
 })
 export class ChoiceBtnsComponent {
-  constructor(private shared:SharedService) { }
-
-  currentPage: string = 'slovniDruhy';
-
+  @Output() event = new EventEmitter<eventArray>()
+  
   modeBtns = signal<choiceBtn[]>([
     { name: 'Procvičování', id: 'preset', selected: false },
     { name: 'Vlastní zadání', id: 'custom', selected: false },
@@ -58,14 +59,12 @@ export class ChoiceBtnsComponent {
       switch(modeBtn.id) {
         case 'preset':
           if (diffBtn) {
-            this.shared.setData(this.currentPage, 'mode', diffBtn.id);
-            this.shared.setData(this.currentPage, 'ready', true);
+            this.event.emit({ mode: diffBtn.id, ready: true });
           }
           break;
 
         case 'custom':
-          this.shared.setData(this.currentPage, 'mode', modeBtn.id);
-          this.shared.setData(this.currentPage, 'ready', true);
+          this.event.emit({ mode: modeBtn.id, ready: true });
           break;
       }
     }
