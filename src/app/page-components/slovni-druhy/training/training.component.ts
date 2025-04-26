@@ -10,18 +10,17 @@ interface Word {
 interface Druh {
   value: number;
   viewValue: string;
-  count: number;
   color: string;
   selected: boolean;
 }
 
 @Component({
-  selector: 'app-easy',
+  selector: 'app-training',
   imports: [NgClass, NgStyle],
-  templateUrl: './easy.component.html',
-  styleUrl: './easy.component.scss'
+  templateUrl: './training.component.html',
+  styleUrl: './training.component.scss'
 })
-export class EasyComponent {
+export class TrainingComponent {
   wordsArray = signal<Word[]>([
     { value: "Kočka", type: 1 },
     { value: "leze", type: 2 },
@@ -33,9 +32,16 @@ export class EasyComponent {
   ])
   
   druhy = signal<Druh[]>([
-    { value: 1, viewValue: 'Podstatné jméno', count: 4, color: 'red', selected: false },
-    { value: 2, viewValue: 'Přídavné jméno', count: 2, color: 'orange', selected: false },
-    { value: 3, viewValue: 'Zájméno', count: 1, color: 'rgb(255, 225, 0)', selected: false },
+    { value: 1, viewValue: 'Podstatné jméno', color: '#D52127', selected: false },
+    { value: 2, viewValue: 'Přídavné jméno', color: '#F36621', selected: false },
+    { value: 3, viewValue: 'Zájméno', color: '#FCED23', selected: false },
+    { value: 4, viewValue: 'Číslovka', color: '#8CC640', selected: false },
+    { value: 5, viewValue: 'Sloveso', color: '#07B151', selected: false },
+    { value: 6, viewValue: 'Příslovce', color: '#2FBBB3', selected: false },
+    { value: 7, viewValue: 'Předložka', color: '#2357BC', selected: false },
+    { value: 8, viewValue: 'Spojka', color: '#4C489B', selected: false },
+    { value: 9, viewValue: 'Částice', color: '#733B97', selected: false },
+    { value: 10, viewValue: 'Citoslovce', color: '#AF3A94', selected: false },
   ])
 
   druhVybrani(index: number) {

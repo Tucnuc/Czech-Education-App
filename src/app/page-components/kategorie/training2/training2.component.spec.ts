@@ -1,18 +1,18 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { HardComponent } from './hard.component';
+import { Training2Component } from './training2.component';
 
-describe('HardComponent', () => {
-  let component: HardComponent;
-  let fixture: ComponentFixture<HardComponent>;
+describe('Training2Component', () => {
+  let component: Training2Component;
+  let fixture: ComponentFixture<Training2Component>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [HardComponent]
+      imports: [Training2Component]
     })
     .compileComponents();
 
-    fixture = TestBed.createComponent(HardComponent);
+    fixture = TestBed.createComponent(Training2Component);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

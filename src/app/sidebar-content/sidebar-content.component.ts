@@ -40,7 +40,7 @@ export class SidebarContentComponent {
   menuItems = signal<MenuItem[]>([
     {
       icon: 'home',
-      label: 'Úvodní Stránka',
+      label: 'Home',
       route: 'home',
     },
     {
@@ -59,9 +59,9 @@ export class SidebarContentComponent {
       route: 'kategorie',
     },
     {
-      icon: 'settings',
-      label: 'Nastavení',
-      route: 'settings',
+      icon: 'leaderboard',
+      label: 'Leaderboard',
+      route: 'leaderboard',
     },
   ]);
 }

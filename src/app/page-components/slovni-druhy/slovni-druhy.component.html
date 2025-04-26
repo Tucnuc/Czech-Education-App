@@ -1,11 +1,5 @@
 @if (isReady()) {
-    @switch (mode) {
-        @case ("easy") { <app-easy></app-easy> }
-        @case ("normal") { <app-normal></app-normal> }
-        @case ("hard") { <app-hard></app-hard> }
-        @case ("custom") { <app-custom></app-custom> }
-        @default { Something's wrong here. }
-    }
+    <app-training></app-training>
 }
 @else {
     <app-choice-btns (event)="receiveEvent($event)"></app-choice-btns>

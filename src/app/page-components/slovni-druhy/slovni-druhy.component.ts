@@ -1,9 +1,6 @@
-import { Component, effect, signal } from '@angular/core';
-import { EasyComponent } from './easy/easy.component';
-import { NormalComponent } from './normal/normal.component';
-import { HardComponent } from './hard/hard.component';
-import { CustomComponent } from './custom/custom.component';
+import { Component, signal } from '@angular/core';
 import { ChoiceBtnsComponent } from './choice-btns/choice-btns.component';
+import { TrainingComponent } from "./training/training.component";
 
 export type eventArray = {
   mode: string;
@@ -12,10 +9,7 @@ export type eventArray = {
 
 @Component({
   selector: 'app-slovni-druhy',
-  imports: [
-    ChoiceBtnsComponent,
-    EasyComponent, NormalComponent, HardComponent, CustomComponent
-  ],
+  imports: [ChoiceBtnsComponent, TrainingComponent],
   templateUrl: './slovni-druhy.component.html',
   styleUrl: './slovni-druhy.component.scss'
 })
@@ -29,5 +23,4 @@ export class SlovniDruhyComponent {
     this.mode = $event.mode
     this.isReady.set($event.ready);
   }
-
 }

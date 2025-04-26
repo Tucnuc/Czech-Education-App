@@ -1,0 +1,63 @@
+@use '@angular/material' as mat;
+
+.container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    height: 100%;
+}
+
+.subCon {
+    @include mat.elevation(3);
+    border-radius: 10px;
+    width: 600px;
+    height: 585px;
+    gap: 25px;
+    display: flex;
+    flex-direction: column;
+    padding-block: 50px;
+    align-items: center;
+}
+
+h1 {
+    margin: 0;
+    font-size: 35px;
+}
+
+hr {
+    border: 0;
+    height: 2px;
+    width: 550px;
+    background: var(--mat-sys-secondary);
+}
+
+p {
+    margin: 0;
+    font-size: 20px;
+}
+
+.accounts {
+    display: flex;
+    flex-direction: column;
+    gap: 25px;
+    align-items: center;
+}
+
+.place0, .place1, .place2 {
+    font-weight: 500;
+}
+
+.place0 {
+    color: gold;
+    font-size: 23px;
+}
+.place1 {
+    color: silver;
+    font-size: 22px;
+}
+.place2 {
+    color: #cd7f32;
+    font-size: 21px;
+}

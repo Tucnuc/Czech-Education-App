@@ -1,1 +1,31 @@
-<p>profile works!</p>
+<div class="container">
+    <div class="subCon">
+        <div class="profileCon">
+            <img [src]="profilePicture" class="profileImg" alt="profile image">
+            <div class="profileChangeContainer">
+                <div class="subConCon">
+                    <p class="bigP">Jméno: {{ profileName }}</p>
+                    <button mat-icon-button>
+                        <mat-icon>edit_square</mat-icon>
+                    </button>
+                </div>
+                <div class="subConCon">
+                    <p class="bigP">Heslo: ********</p>
+                    <button mat-icon-button>
+                        <mat-icon>edit_square</mat-icon>
+                    </button>
+                </div>
+                <p>Úroveň: {{ profileRank }}</p>
+                <p>Celkové XP: {{ totalXP }}</p>
+            </div>
+        </div>
+        <hr>
+        <div class="otherSettings">
+            <div class="darkModeCon">
+                <p>Dark Mode</p>
+                <mat-slide-toggle [(ngModel)]="darkMode"></mat-slide-toggle>
+            </div>
+            <button mat-raised-button>Odhlásit se</button>
+        </div>
+    </div>
+</div>

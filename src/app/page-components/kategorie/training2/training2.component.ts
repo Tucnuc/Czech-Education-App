@@ -7,12 +7,12 @@ interface Word {
 }
 
 @Component({
-  selector: 'app-easy2',
+  selector: 'app-training2',
   imports: [NgClass],
-  templateUrl: './easy2.component.html',
-  styleUrl: './easy2.component.scss'
+  templateUrl: './training2.component.html',
+  styleUrl: './training2.component.scss'
 })
-export class Easy2Component {
+export class Training2Component {
   wordsArray = signal<Word[]>([
     { value: "Kočka", type: 1 },
     { value: "leze", type: 2 },
