@@ -1,0 +1,20 @@
+<div class="container">
+    <div class="textCon">
+        <p class="friendsCount">{{ 'Přátelé (' + friendsList.length + ')' }}</p>
+        <a [routerLink]="'/friends'">Všichni Přátelé</a>
+    </div>
+    <div class="friends">
+        @for (friend of showingFriends(); track $index) {
+            <div class="friend">
+                <img [src]="friend.img" alt="friend">
+                <p class="name">{{ friend.name }}</p>
+                <p>{{ friend.level + ' lvl'}}</p>
+                <div class="status" [ngClass]="{ 'online': friend.online }"></div>
+            </div>
+        }
+    </div>
+    <hr>
+    <div class="lexiconCon">
+        
+    </div>
+</div>

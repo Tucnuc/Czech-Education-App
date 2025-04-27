@@ -49,6 +49,11 @@ export class SidebarContentComponent {
       route: 'profile',
     },
     {
+      icon: 'group',
+      label: 'Přátelé',
+      route: 'friends',
+    },
+    {
       icon: 'text_fields',
       label: 'Slovní Druhy',
       route: 'slovni-druhy',

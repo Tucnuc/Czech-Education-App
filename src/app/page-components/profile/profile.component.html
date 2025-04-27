@@ -25,7 +25,7 @@
                 <p>Dark Mode</p>
                 <mat-slide-toggle [(ngModel)]="darkMode"></mat-slide-toggle>
             </div>
-            <button mat-raised-button>Odhlásit se</button>
+            <button mat-raised-button>{{ (loggedIn ? 'Odhlásit se' : 'Přihlásit se') }}</button>
         </div>
     </div>
 </div>
