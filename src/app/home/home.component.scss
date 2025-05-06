@@ -82,3 +82,40 @@ a {
 a:hover {
     text-decoration: underline;
 }
+
+.bookCon {
+    width: 200px;
+    height: 225px;
+    padding: 20px;
+    border: solid 2px var(--mat-sys-secondary);
+    border-radius: 10px;
+    transition: 200ms ease-in-out;
+    cursor: pointer;
+}
+
+.tome {
+    fill: var(--mat-sys-secondary);
+    transition: 200ms ease-in-out;
+}
+
+.lexiconCon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 100px;
+    margin-top: 35px;
+}
+
+.bookCon:hover {
+    border-color: var(--mat-sys-primary);
+}
+.bookCon:hover .tome {
+    fill: var(--mat-sys-primary);
+}
+
+.tomeHeading {
+    font-size: 23px;
+    font-weight: 500;
+    margin-bottom: 10px;
+    text-align: center;
+}

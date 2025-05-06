@@ -5,6 +5,7 @@ import { SlovniDruhyComponent } from './page-components/slovni-druhy/slovni-druh
 import { KategorieComponent } from './page-components/kategorie/kategorie.component';
 import { LeaderboardComponent } from './page-components/leaderboard/leaderboard.component';
 import { FriendsComponent } from './page-components/friends/friends.component';
+import { AccountComponent } from './page-components/account/account.component';
 
 export const routes: Routes = [
     { path: '', pathMatch: 'full', redirectTo: 'home' },
@@ -14,4 +15,5 @@ export const routes: Routes = [
     { path: 'slovni-druhy', component: SlovniDruhyComponent },
     { path: 'kategorie', component: KategorieComponent },
     { path: 'leaderboard', component: LeaderboardComponent },
+    { path: 'account', component: AccountComponent },
 ];

@@ -1,6 +1,7 @@
 import { NgClass } from '@angular/common';
 import { Component, OnInit, signal } from '@angular/core';
 import { RouterLink } from '@angular/router';
+import { LexiconComponent } from "./lexicon/lexicon.component";
 
 export type account = {
   name: string;
@@ -11,7 +12,7 @@ export type account = {
 
 @Component({
   selector: 'app-home',
-  imports: [NgClass, RouterLink],
+  imports: [NgClass, RouterLink, LexiconComponent],
   templateUrl: './home.component.html',
   styleUrl: './home.component.scss'
 })
@@ -34,5 +35,13 @@ export class HomeComponent implements OnInit {
   
     const sortedFriends = [...onlineUsers, ...offlineUsers].slice(0, 10);
     this.showingFriends.set(sortedFriends);
+  }
+
+  lexiconActive: boolean = false;
+  selectedMode: string = '';
+  
+  openLexicon(mode: string) {
+    this.selectedMode = mode;
+    this.lexiconActive = true;
   }
 }
