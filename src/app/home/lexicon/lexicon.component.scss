@@ -1,0 +1,38 @@
+.container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    height: 100%;
+    width: 100%;
+}
+
+.subCon {
+    width: 600px;
+}
+
+.hd1 {
+    font-size: 30px;
+    font-weight: 450;
+}
+.hd2 {
+    font-size: 25px;
+    font-weight: 450;
+}
+.hd3 {
+    font-size: 18px;
+    font-weight: 450;
+}
+
+.lastPart {
+    padding-bottom: 30px;
+    margin-bottom: 0;
+}
+
+li {
+    margin-block: 5px;
+}
+
+.returnBtn {
+    position: absolute;
+    margin: 7.5px;
+}

@@ -1,5 +1,5 @@
 @if (lexiconActive) {
-    <app-lexicon [mode]="selectedMode"></app-lexicon>
+    <app-lexicon [mode]="selectedMode" (returnEvent)="lexiconActive = $event"></app-lexicon>
 }
 @else {
     <div class="container">
