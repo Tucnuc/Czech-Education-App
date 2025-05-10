@@ -1,9 +1,59 @@
-<div class="container">
-    <div class="sentenceCon">
-        @for (word of wordsArray(); track $index) {
-            <div class="wordCon" [ngClass]="{ 'selectableWord': word.type === 1 }">
-                <p>{{ word.value }}</p>
-            </div>
-        }
+@if (mode == 'custom') {
+    <div class="container2">
+        <div class="concon1">
+            <p class="inputHeading">Zadej větu:</p>
+        </div>
+        <mat-form-field>
+            <input matInput #inputElement>
+        </mat-form-field>
+        <button mat-icon-button class="nextBtn" (click)="onSubmit()">
+            <mat-icon>subdirectory_arrow_right</mat-icon>
+        </button>
     </div>
-</div>
+}
+@else {
+    <div class="container">
+        <div class="sentenceCon">
+            @for (word of wordsArray(); track $index) {
+                <div class="wordCon" [ngClass]="{ 'selectableWord': word.type === 1 || word.type === 2 }">
+                    <p (click)="selectWord(word)">{{ word.value }}</p>
+                </div>
+            }
+        </div>
+        <button mat-icon-button class="nextBtn">
+            <mat-icon>subdirectory_arrow_right</mat-icon>
+        </button>
+        <div class="concon">
+            @if (clickedWordType == 1) {
+                <p class="clickedWord">{{ clickedWord }}</p>
+                <div class="choicesCon">
+                    @for (selection of typeOneChoices(); track $index) {
+                        <mat-form-field [className]="selection.class">
+                            <mat-label>{{ selection.value }}</mat-label>
+                            <mat-select>
+                                @for (choice of selection.choices; track $index) {
+                                    <mat-option [value]="choice">{{ choice }}</mat-option>
+                                }
+                            </mat-select>
+                        </mat-form-field>
+                    }
+                </div>
+            }
+            @else if (clickedWordType == 2) {
+                <p class="clickedWord">{{ clickedWord }}</p>
+                <div class="choicesCon">
+                    @for (selection of typeTwoChoices(); track $index) {
+                        <mat-form-field [className]="selection.class">
+                            <mat-label>{{ selection.value }}</mat-label>
+                            <mat-select>
+                                @for (choice of selection.choices; track $index) {
+                                    <mat-option [value]="choice">{{ choice }}</mat-option>
+                                }
+                            </mat-select>
+                        </mat-form-field>
+                    }
+                </div>
+            }
+        </div>
+    </div>
+}

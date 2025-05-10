@@ -1,5 +1,5 @@
 @if (isReady()) {
-    <app-training></app-training>
+    <app-training [mode]="mode"></app-training>
 }
 @else {
     <app-choice-btns (event)="receiveEvent($event)"></app-choice-btns>

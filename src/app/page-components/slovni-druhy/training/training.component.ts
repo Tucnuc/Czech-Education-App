@@ -1,5 +1,9 @@
 import { NgClass, NgStyle } from '@angular/common';
-import { Component, signal } from '@angular/core';
+import { Component, ElementRef, Input, OnInit, signal, ViewChild } from '@angular/core';
+import { MatButtonModule } from '@angular/material/button';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatIconModule } from '@angular/material/icon';
+import { MatInputModule } from '@angular/material/input';
 
 interface Word {
   value: string;
@@ -16,20 +20,17 @@ interface Druh {
 
 @Component({
   selector: 'app-training',
-  imports: [NgClass, NgStyle],
+  imports: [NgClass, NgStyle, MatFormFieldModule, MatInputModule, MatButtonModule, MatIconModule],
   templateUrl: './training.component.html',
   styleUrl: './training.component.scss'
 })
-export class TrainingComponent {
-  wordsArray = signal<Word[]>([
-    { value: "Kočka", type: 1 },
-    { value: "leze", type: 2 },
-    { value: "dírou,", type: 1 },
-    { value: "pes", type: 3 },
-    { value: "oknem,", type: 1 },
-    { value: "pes", type: 1 },
-    { value: "oknem.", type: 2 },
-  ])
+export class TrainingComponent implements OnInit {
+  @Input() mode: string = '';
+
+  veta: string = 'Kočka leze dírou, pes oknem.';
+  unformattedArray = {};
+
+  wordsArray = signal<Word[]>([]);
   
   druhy = signal<Druh[]>([
     { value: 1, viewValue: 'Podstatné jméno', color: '#D52127', selected: false },
@@ -85,5 +86,60 @@ export class TrainingComponent {
   get cursorColor(): string {
     const vybranyDruh = this.druhy().find((druh) => druh.selected);
     return vybranyDruh ? vybranyDruh.color : 'transparent';
+  }
+
+  ngOnInit(): void {
+    if (this.mode !== 'custom') {
+      this.requestSentence();
+
+      this.wordsArray = signal<Word[]>([
+        { value: "Kočka", type: 1 },
+        { value: "leze", type: 2 },
+        { value: "dírou,", type: 1 },
+        { value: "pes", type: 3 },
+        { value: "oknem,", type: 1 },
+        { value: "pes", type: 1 },
+        { value: "oknem.", type: 2 },
+      ]);
+    }
+  }
+
+  requestSentence() {
+    console.log('Větu pls tralalelo tralala')
+  }
+
+  async sendSentence(sentence: string): Promise<{ [key: string]: number }> {
+    try {
+      const response = await fetch(`http://localhost:8000/pos/${encodeURIComponent(sentence)}`);
+      const data = await response.json();
+      console.log(data);
+      return data;
+    } catch (err) {
+      console.error(err);
+      return {};
+    }
+  }
+
+  formatSentence(sentence: {[key: string]: number}) {
+    for (const [key, value] of Object.entries(sentence)) {
+      this.wordsArray.update((words) => [
+        ...words,
+        { value: key, type: value }
+      ])
+    }
+  }
+
+  @ViewChild('inputElement') inputElement!: ElementRef<HTMLInputElement>;
+
+  async onSubmit() {
+    const inputValue: string = this.inputElement.nativeElement.value.trim();
+    if (inputValue) {
+      this.mode = '';
+      const sentenceData = await this.sendSentence(inputValue);
+      this.formatSentence(sentenceData);
+      console.log('Zadaná věta:', inputValue);
+    } else {
+      console.warn('Vstup je prázdný!');
+    }
   }
 }
