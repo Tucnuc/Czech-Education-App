@@ -1,10 +1,10 @@
 <div class="container">
     <div class="subCon">
         <div class="profileCon">
-            <img [src]="profilePicture" class="profileImg" alt="profile image">
+            <img [src]="sharedService.profilePicture()" class="profileImg" alt="profile image">
             <div class="profileChangeContainer">
                 <div class="subConCon">
-                    <p class="bigP">Jméno: {{ profileName }}</p>
+                    <p class="bigP">Jméno: {{ sharedService.username() }}</p>
                     <button mat-icon-button>
                         <mat-icon>edit_square</mat-icon>
                     </button>
@@ -15,17 +15,17 @@
                         <mat-icon>edit_square</mat-icon>
                     </button>
                 </div>
-                <p>Úroveň: {{ profileRank }}</p>
-                <p>Celkové XP: {{ totalXP }}</p>
+                <p>Úroveň: {{ sharedService.level() }}</p>
+                <p>Celkové XP: {{ sharedService.xp() }}</p>
             </div>
         </div>
         <hr>
         <div class="otherSettings">
             <div class="darkModeCon">
                 <p>Dark Mode</p>
-                <mat-slide-toggle [(ngModel)]="darkMode"></mat-slide-toggle>
+                <mat-slide-toggle [(ngModel)]="darkMode" (change)="toggleDarkMode()"></mat-slide-toggle>
             </div>
-            <button mat-raised-button>{{ (loggedIn ? 'Odhlásit se' : 'Přihlásit se') }}</button>
+            <button mat-raised-button (click)="navigateToLogin()">{{ (sharedService.loggedIn() ? 'Odhlásit se' : 'Přihlásit se') }}</button>
         </div>
     </div>
 </div>

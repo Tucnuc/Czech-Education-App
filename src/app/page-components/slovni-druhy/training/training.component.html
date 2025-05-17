@@ -1,3 +1,7 @@
+<button mat-icon-button class="returnBtn" (click)="returnBack()">
+    <mat-icon style="width: 24px; height: 24px; font-size: 24px; padding: 0;">arrow_back</mat-icon>
+</button>
+
 @if (mode == 'custom') {
     <div class="container2">
         <div class="concon">
@@ -23,20 +27,24 @@
             @for (word of wordsArray(); track $index) {
                 <div class="wordCon" (click)="obarvitSlovo($index)" [style.color]="word.color">
                     <p>{{ word.value }}</p>
+                    <p class="shortcut">{{ word.shortcut }}</p>
+                    @if (answersSubmitted) { <p class="correctType">{{ getShortcutForType(word.type) }}</p> }
                 </div>
             }
         </div>
-        <button mat-icon-button class="nextBtn">
+        <button mat-icon-button class="nextBtn" (click)="submitAnswers()">
             <mat-icon>subdirectory_arrow_right</mat-icon>
         </button>
-        <div class="druhCon">
-            @for (druh of druhy(); track $index) {
-                <div
-                    (click)="druhVybrani($index)" class="druh"
-                    [ngClass]="{'activeDruh': druh.selected}" [style.backgroundColor]="druh.color">
-                    {{ druh.viewValue }}
-                </div>
-            }
-        </div>
+        @if (!answersSubmitted) {
+            <div class="druhCon">
+                @for (druh of druhy(); track $index) {
+                    <div
+                        (click)="druhVybrani($index)" class="druh"
+                        [ngClass]="{'activeDruh': druh.selected}" [style.backgroundColor]="druh.color">
+                        {{ druh.viewValue }}
+                    </div>
+                }
+            </div>
+        }
     </div>
 }

@@ -1,5 +1,5 @@
 import { NgClass, NgStyle } from '@angular/common';
-import { Component, ElementRef, Input, OnInit, signal, ViewChild } from '@angular/core';
+import { Component, ElementRef, Input, OnInit, Output, signal, ViewChild, EventEmitter } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
@@ -9,6 +9,8 @@ interface Word {
   value: string;
   type: number;
   color?: string;
+  chosenType?: number;
+  shortcut?: string;
 }
 
 interface Druh {
@@ -16,6 +18,7 @@ interface Druh {
   viewValue: string;
   color: string;
   selected: boolean;
+  shortcut: string;
 }
 
 @Component({
@@ -26,6 +29,7 @@ interface Druh {
 })
 export class TrainingComponent implements OnInit {
   @Input() mode: string = '';
+  @Output() returningEvent = new EventEmitter;
 
   veta: string = 'Kočka leze dírou, pes oknem.';
   unformattedArray = {};
@@ -33,16 +37,16 @@ export class TrainingComponent implements OnInit {
   wordsArray = signal<Word[]>([]);
   
   druhy = signal<Druh[]>([
-    { value: 1, viewValue: 'Podstatné jméno', color: '#D52127', selected: false },
-    { value: 2, viewValue: 'Přídavné jméno', color: '#F36621', selected: false },
-    { value: 3, viewValue: 'Zájméno', color: '#FCED23', selected: false },
-    { value: 4, viewValue: 'Číslovka', color: '#8CC640', selected: false },
-    { value: 5, viewValue: 'Sloveso', color: '#07B151', selected: false },
-    { value: 6, viewValue: 'Příslovce', color: '#2FBBB3', selected: false },
-    { value: 7, viewValue: 'Předložka', color: '#2357BC', selected: false },
-    { value: 8, viewValue: 'Spojka', color: '#4C489B', selected: false },
-    { value: 9, viewValue: 'Částice', color: '#733B97', selected: false },
-    { value: 10, viewValue: 'Citoslovce', color: '#AF3A94', selected: false },
+    { value: 1, viewValue: 'Podstatné jméno', color: '#D52127', selected: false, shortcut: 'Pods.' },
+    { value: 2, viewValue: 'Přídavné jméno', color: '#F36621', selected: false, shortcut: 'Příd.' },
+    { value: 3, viewValue: 'Zájméno', color: '#FCED23', selected: false, shortcut: 'Zájm.' },
+    { value: 4, viewValue: 'Číslovka', color: '#8CC640', selected: false, shortcut: 'Čísl.' },
+    { value: 5, viewValue: 'Sloveso', color: '#07B151', selected: false, shortcut: 'Slov.' },
+    { value: 6, viewValue: 'Příslovce', color: '#2FBBB3', selected: false, shortcut: 'Přís.' },
+    { value: 7, viewValue: 'Předložka', color: '#2357BC', selected: false, shortcut: 'Před.' },
+    { value: 8, viewValue: 'Spojka', color: '#4C489B', selected: false, shortcut: 'Spoj.' },
+    { value: 9, viewValue: 'Částice', color: '#733B97', selected: false, shortcut: 'Část.' },
+    { value: 10, viewValue: 'Citoslovce', color: '#AF3A94', selected: false, shortcut: 'Cit.' },
   ])
 
   druhVybrani(index: number) {
@@ -56,7 +60,7 @@ export class TrainingComponent implements OnInit {
     if (vybranyDruh) {
       this.wordsArray.update((words) =>
         words.map((word, i) =>
-          i === index ? { ...word, color: vybranyDruh.color } : word
+          i === index ? { ...word, color: vybranyDruh.color, chosenType: vybranyDruh.value, shortcut: vybranyDruh.shortcut } : word
         )
       );
     }
@@ -89,6 +93,7 @@ export class TrainingComponent implements OnInit {
   }
 
   ngOnInit(): void {
+    console.log(this.mode)
     if (this.mode !== 'custom') {
       this.requestSentence();
 
@@ -104,8 +109,18 @@ export class TrainingComponent implements OnInit {
     }
   }
 
-  requestSentence() {
+  async requestSentence() {
     console.log('Větu pls tralalelo tralala')
+
+    try {
+      const response = await fetch(`http://localhost:8000/generate`);
+      const data = await response.json();
+      console.log(data);
+      return data;
+    } catch (err) {
+      console.error(err);
+      return {};
+    }
   }
 
   async sendSentence(sentence: string): Promise<{ [key: string]: number }> {
@@ -141,5 +156,43 @@ export class TrainingComponent implements OnInit {
     } else {
       console.warn('Vstup je prázdný!');
     }
+  }
+
+  getShortcutForType(type: number): string {
+    const druh = this.druhy().find(druh => druh.value === type);
+    return druh?.shortcut || 'Neznámý';
+  }
+
+  answersSubmitted: boolean = false;
+  submitAnswers() {
+    if (this.answersSubmitted) {
+      this.answersSubmitted = false;
+      this.wordsArray.update((words) =>
+        words.map((word) => ({ ...word, color: undefined, chosenType: undefined, shortcut: undefined }))
+      );
+
+      if (this.mode) {
+        this.requestSentence();
+      } else {
+        this.returnBack();
+      }
+
+    } else {
+      this.answersSubmitted = true;
+      this.wordsArray.update((words) =>
+        words.map((word) =>
+          word.type === word.chosenType
+            ? { ...word, color: 'green' }
+            : { ...word, color: 'red' }
+        )
+      );
+      this.druhy.update((druhy) =>
+        druhy.map((druh) => ({ ...druh, selected: false }))
+      );
+    }
+  }
+
+  returnBack() {
+    this.returningEvent.emit();
   }
 }

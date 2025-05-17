@@ -15,14 +15,14 @@
     }
     <div class="profileContainer" [class.hideProfile]="sidebarCollapsed()">
         <div class="profile" [@fading]="(sidebarCollapsed()) ? 'collapsed' : 'expanded'">
-            <img [src]="profilePicture" class="profileImg" alt="profile image"/>
+            <img [src]="sharedService.profilePicture()" class="profileImg" alt="profile image"/>
             <div class="textContainer">
-                <h3>{{ profileName }}</h3>
-                <p>Úroveň: {{ profileRank }}</p>
+                <h3>{{ sharedService.username() }}</h3>
+                <p>Úroveň: {{ sharedService.level() }}</p>
             </div>
         </div>
         <button mat-icon-button>
-            <mat-icon>{{ (loggedIn) ? 'logout' : 'login' }}</mat-icon>
+            <mat-icon (click)="navigateToLogin()">{{ (sharedService.loggedIn()) ? 'logout' : 'login' }}</mat-icon>
         </button>
     </div>
 </mat-nav-list>

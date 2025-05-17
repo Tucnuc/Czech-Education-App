@@ -7,6 +7,7 @@
     justify-content: center;
     height: 100%;
     width: 100%;
+    gap: 20px;
 }
 .container2 {
     display: flex;
@@ -30,6 +31,7 @@
     justify-content: center;
     align-items: center;
     cursor: pointer;
+    position: relative;
 }
 
 p {
@@ -108,4 +110,28 @@ mat-form-field, .concon {
 }
 .mat-icon {
     padding-left: 7px;
+}
+
+#back {
+    height: 24px;
+    width: 24px;
+    font-size: 24px;
+    padding: 0;
+}
+
+.shortcut {
+    position: absolute;
+    font-size: 13px;
+    top: 45px;
+}
+.correctType {
+    color: black;
+    font-size: 13px;
+    bottom: 45px;
+    position: absolute;
+}
+
+.returnBtn {
+    position: fixed;
+    margin: 7.5px;
 }

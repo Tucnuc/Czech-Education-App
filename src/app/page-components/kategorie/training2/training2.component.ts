@@ -1,5 +1,5 @@
 import { NgClass } from '@angular/common';
-import { Component, ElementRef, Input, OnInit, signal, ViewChild } from '@angular/core';
+import { Component, ElementRef, EventEmitter, Input, OnInit, Output, signal, ViewChild } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { MatFormFieldModule } from '@angular/material/form-field';
@@ -11,12 +11,18 @@ interface Word {
   value: string;
   type: number;
   data: {[key: string]: string | number};
+  selectedChoices?: { [key: string]: string | number };
 }
 
 interface Choice {
   value: string;
   choices: (string | number)[];
   class: string;
+}
+
+interface Choice2 {
+  word: string;
+  data: { [key: string]: string | number };
 }
 
 @Component({
@@ -27,6 +33,7 @@ interface Choice {
 })
 export class Training2Component implements OnInit {
   @Input() mode: string = '';
+  @Output() returningEvent = new EventEmitter;
 
   wordsArray = signal<Word[]>([]);
 
@@ -184,9 +191,65 @@ export class Training2Component implements OnInit {
   clickedWordType: number = 0;
   clickedWord: string = '';
 
+  savedChoices: Choice2[] = [];
+
+  saveChoices(value: any, type: any) {
+    const kategorie = type.value;
+    const hodnota = value.value;
+    const slovo = this.clickedWord;
+
+    const existingChoice = this.savedChoices.find(choice => choice.word === slovo);
+
+    if (existingChoice) {
+      existingChoice.data[kategorie] = hodnota;
+    }
+
+    else {
+      this.savedChoices.push({
+        word: slovo,
+        data: { [kategorie]: hodnota }
+      });
+    }
+  }
+
+  getSavedChoice(category: string): string | number | undefined {
+    const existingChoice = this.savedChoices.find(choice => choice.word === this.clickedWord);
+    return existingChoice?.data[category];
+  }
+
+  resetVariables() {
+    this.clickedWordType = 0;
+    this.clickedWord = '';
+    this.savedChoices = [];
+  }
+
   selectWord(word: Word) {
     if (word.type === 3) return;
     this.clickedWordType = word.type;
     this.clickedWord = word.value;
+  }
+
+  answersSubmitted: boolean = false;
+  submitAnswers() {
+    if (this.answersSubmitted) {
+      this.answersSubmitted = false;
+      console.log(this.mode)
+      if (this.mode) {
+        this.requestSentence();
+      } else {
+        this.returnBack();
+      }
+    } else {
+      this.answersSubmitted = true;
+      
+      // vyhodnocení
+      console.log(this.savedChoices);
+
+      this.resetVariables();
+    }
+  }
+
+  returnBack() {
+    this.returningEvent.emit();
   }
 }

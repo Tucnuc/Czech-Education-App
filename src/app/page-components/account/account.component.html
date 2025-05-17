@@ -1,0 +1,60 @@
+@if (recentlyRegistered) { 
+    <div class="announcer">
+        <svg id="checkmark" xmlns="http://www.w3.org/2000/svg" version="1.1" viewBox="0 0 638.61 638.61">
+            <!-- Generator: Adobe Illustrator 29.5.0, SVG Export Plug-In . SVG Version: 2.1.0 Build 137)  -->
+            <defs>
+                <style>
+                .st0 {
+                    fill: white;
+                    fill-rule: evenodd;
+                }
+                </style>
+            </defs>
+            <path class="st0" d="M628.85,124.64c13.02,13.02,13.02,34.12,0,47.14l-365.76,365.76c-12.93,12.93-33.88,13.03-46.93.21L9.98,335.25c-13.13-12.9-13.32-34-.42-47.14l23.36-23.78c12.9-13.13,34-13.32,47.14-.42l159.05,156.21L558.14,101.07c13.02-13.02,34.12-13.02,47.14,0l23.57,23.57Z"/>
+        </svg>
+        <p>Úspěšně zaregistrováno</p>
+    </div>
+}
+
+<div class="container">
+    <p class="heading">{{ heading }}</p>
+    <hr>
+    <div class="subHeading">Jméno</div>
+    <div class="imgCon">
+        <mat-form-field>
+            <input type="text" matInput [(ngModel)]="name" (input)="checkName()">
+        </mat-form-field>
+        @if (checks.loginName) { <p class="info error">Jméno nebylo nalezeno</p> }
+        @if (register) {
+            <img [src]="!checks.nameCheck ? 'svgs/x-symbol.svg' : 'svgs/checkmark.svg'" alt="symbol">
+            <p class="info">Min. 4 znaky</p>
+        }
+    </div>
+
+    <div class="subHeading">Heslo</div>
+    <div class="imgCon">
+        <mat-form-field>
+            <input type="password" matInput [(ngModel)]="password" (input)="checkPasswords()">
+        </mat-form-field>
+        @if (checks.loginPass) { <p class="info error">Nesprávné heslo</p> }
+        @if (register) { <img [src]="!checks.passwordCheck ? 'svgs/x-symbol.svg' : 'svgs/checkmark.svg'" alt="symbol"> }
+    </div>
+
+    @if (register) {
+        <div class="subHeading">Heslo znovu</div>
+        <div class="imgCon">
+            <mat-form-field>
+                <input type="password" matInput [(ngModel)]="passwordConfirm" (input)="checkPasswords()">
+            </mat-form-field>
+            <img [src]="!checks.passwordCheck ? 'svgs/x-symbol.svg' : 'svgs/checkmark.svg'" alt="symbol">
+            <p class="info">Min. 4 znaky</p>
+        </div>
+    }
+    <button mat-icon-button class="nextBtn" (click)="proceed()">
+        <mat-icon>subdirectory_arrow_right</mat-icon>
+    </button>
+    <div class="bottomTextCon">
+        <p>{{ bottomTexts[0] }}</p>
+        <p class="switchBtn" (click)="updatePage(true)">{{ bottomTexts[1] }}</p>
+    </div>
+</div>

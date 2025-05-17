@@ -1,15 +1,26 @@
 import { NgStyle } from '@angular/common';
-import { Component, computed, Input, signal } from '@angular/core';
+import { Component, computed, Input, OnInit, signal } from '@angular/core';
 import { trigger, state, style, animate, transition } from '@angular/animations';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatListModule } from '@angular/material/list'
-import { RouterModule } from '@angular/router';
+import { RouterModule, Router } from '@angular/router';
+import { SharedService } from '../shared/shared.service';
 
 export type MenuItem = {
   icon: string;
   label: string;
   route: string;
+}
+
+interface Account {
+  username: string;
+  profilePicture: string;
+  darkmode: boolean;
+  friends: string[];
+  level: number;
+  xp: number;
+  loggedIn: boolean;
 }
 
 @Component({
@@ -26,15 +37,16 @@ export type MenuItem = {
   ]
 })
 export class SidebarContentComponent {
-
-  profileName: string = 'Guest';
-  loggedIn: boolean = false;
-  profilePicture: string = 'images/default.png';
-  profileRank: number = 0;
+  constructor(private router: Router, public sharedService: SharedService) { }
 
   sidebarCollapsed = signal(false);
   @Input() set collapsed(val: boolean) {
     this.sidebarCollapsed.set(val);
+  }
+
+  navigateToLogin() {
+    if (this.sharedService.loggedIn()) this.sharedService.logoutUser();
+    else this.router.navigate(['/account']);
   }
 
   menuItems = signal<MenuItem[]>([
