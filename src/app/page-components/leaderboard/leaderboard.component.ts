@@ -1,7 +1,7 @@
 import { Component, OnInit, signal } from '@angular/core';
 
-export type account = {
-  name: string;
+export type Finalist = {
+  username: string;
   level: number;
 }
 
@@ -12,19 +12,26 @@ export type account = {
   styleUrl: './leaderboard.component.scss'
 })
 export class LeaderboardComponent implements OnInit {
-  finalists = signal<account[]>([]);
-  userList: account[] = [
-    { name: 'John', level: 6 },
-    { name: 'Tom', level: 12 },
-    { name: 'Patrik', level: 54 },
-    { name: 'Klaudie', level: 19 },
-    { name: 'Adam', level: 100 },
-  ];
+  finalists = signal<Finalist[]>([]);
+
+  async updateLeaderboard() {
+    try {
+      const response = await fetch(`http://localhost:8000/leaderboard`); 
+      const data = await response.json();
+      const formattedData: Finalist[] = []
+
+      for (const user of data) {
+        formattedData.push({
+          username: user.username,
+          level: user.level,
+        });
+      }
+
+      this.finalists.set(formattedData);
+    } catch (err) { console.error(err) }
+  }
 
   ngOnInit(): void {
-    const sortedUsers = this.userList
-      .sort((a, b) => b.level - a.level);
-    const topUsers = sortedUsers.slice(0, 10);
-    this.finalists.set(topUsers);
+    this.updateLeaderboard();
   }
 }

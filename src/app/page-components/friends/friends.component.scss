@@ -1,0 +1,118 @@
+@use '@angular/material' as mat;
+
+.container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 100%;
+}
+
+p {
+    margin: 0;
+}
+
+$central-width: 800px;
+
+.subCon, .subCon2 {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: $central-width;
+}
+
+.subCon p {
+    margin-bottom: 20px;
+    font-weight: 450;
+    font-size: 27.5px;
+}
+
+.subCon2 p {
+    margin-bottom: 20px;
+    font-size: 22.5px;
+    font-weight: 450;
+}
+
+.subCon2 {
+    margin-bottom: 20px;
+}
+
+.buttonsCon {
+    display: flex;
+    align-items: center;
+    width: $central-width;
+}
+
+.button {
+    width: calc($central-width / 2);
+    text-align: center;
+    padding-top: 10px;
+    cursor: pointer;
+    margin-bottom: 20px;
+    background-color: var(--mat-sys-surface-variant);
+}
+
+.leftBtn {
+    border-top-left-radius: 5px;
+}
+.rightBtn {
+    border-top-right-radius: 5px;
+}
+
+.button p {
+    font-size: 20px;
+    font-weight: 450;
+}
+
+.button hr {
+    width: 100%;
+    height: 2px;
+    background-color: var(--mat-sys-outline-variant);
+    border: none;
+    margin-bottom: 0;
+}
+
+.button:hover hr {
+    background-color: var(--mat-sys-secondary);
+}
+.active hr {
+    background-color: var(--mat-sys-primary);
+}
+
+.friendsCon {
+    display: grid;
+    width: $central-width;
+    grid-template-columns: repeat(3, calc($central-width / 3));
+    gap: 5px;
+}
+
+.friendCon {
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    padding: 10px;
+    gap: 20px;
+    background-color: var(--mat-sys-surface-variant);
+    border-radius: 5px;
+    width: calc(($central-width / 3) - 20px);
+    height: 70px;
+}
+
+.friendCon img {
+    border-radius: 100vh;
+    object-fit: cover;
+    width: 60px;
+    height: 60px;
+    margin-left: 10px;
+}
+
+.name {
+    font-size: 18px;
+    font-weight: 450;
+}
+
+.lvl {
+    font-size: 14px;
+    margin-top: 2.5px;
+}

@@ -33,7 +33,7 @@ interface Account {
 export class AccountComponent implements OnInit {
   constructor(private router: Router, public sharedService: SharedService) { }
 
-  register: boolean = true;
+  register: boolean = false;
   recentlyRegistered: boolean = false;
   accountData: any = {};
   usernames: string[] = [];
@@ -61,7 +61,7 @@ export class AccountComponent implements OnInit {
   checkName() {
     if (!this.register) return;
     if (this.usernames) {
-      if (this.usernames.find(username => username === this.name) || this.name.length < 4) this.checks.nameCheck = false;
+      if (this.usernames.find(username => username === this.name) || this.name.length < 4 || this.name.length > 16) this.checks.nameCheck = false;
       else this.checks.nameCheck = true;
     }
   }

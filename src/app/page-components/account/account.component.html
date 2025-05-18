@@ -27,7 +27,7 @@
         @if (checks.loginName) { <p class="info error">Jméno nebylo nalezeno</p> }
         @if (register) {
             <img [src]="!checks.nameCheck ? 'svgs/x-symbol.svg' : 'svgs/checkmark.svg'" alt="symbol">
-            <p class="info">Min. 4 znaky</p>
+            <p class="info">Min. 4 znaky, Max 16 znaků</p>
         }
     </div>
 

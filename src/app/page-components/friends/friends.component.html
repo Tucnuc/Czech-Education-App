@@ -1,6 +1,43 @@
 <div class="container">
-    <div class="buttonCon"></div>
-    <div class="friends">
-        
+    <div class="subCon">
+        <p>Moji přátelé</p>
+        <mat-form-field>
+            <input matInput type="search">
+            <mat-label>Hledat uživatele</mat-label>
+            <button matSuffix mat-icon-button aria-label="Search">
+                <mat-icon>search</mat-icon>
+            </button>
+        </mat-form-field>
+    </div>
+    <div class="buttonsCon">
+        <div class="button leftBtn" [ngClass]="{ 'active': activeTab === 'friends' }" (click)="setActiveTab('friends')">
+            <p>Přátelé</p>
+            <hr>
+        </div>
+        <div class="button rightBtn" [ngClass]="{ 'active': activeTab === 'requests' }" (click)="setActiveTab('requests')">
+            <p>Žádosti</p>
+            <hr>
+        </div>
+    </div>
+    <div class="subCon2">
+        <p>{{ displays[0] }} ({{ sharedService.friends().length }})</p>
+        <mat-form-field>
+            <input matInput type="search">
+            <mat-label>Hledat {{ displays[1] }}</mat-label>
+            <button matSuffix mat-icon-button aria-label="Search">
+                <mat-icon>search</mat-icon>
+            </button>
+        </mat-form-field>
+    </div>
+    <div class="friendsCon">
+        @for (friend of friendsList(); track $index) {
+            <div class="friendCon">
+                <img [src]="friend.profilePic" alt="profile_picture">
+                <div class="subConCon">
+                    <p class="name">{{ friend.username }}</p>
+                    <p class="lvl">Úroveň: {{ friend.level }}</p>
+                </div>
+            </div>
+        }
     </div>
 </div>

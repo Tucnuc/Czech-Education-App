@@ -29,10 +29,13 @@ export class ProfileComponent {
     this.darkMode = this.sharedService.darkmode();
   }
 
-  toggleDarkMode() {
+  async toggleDarkMode() {
     const newDarkModeValue = !this.sharedService.darkmode();
     this.darkMode = newDarkModeValue;
     this.sharedService.updateAccountInfo({ darkmode: newDarkModeValue });
+    try {
+      await fetch(`http://localhost:8000/profile/darkmode/${this.sharedService.username()}/${this.sharedService.darkmode()}`); 
+    } catch (err) { console.error(err) }
   }
 
   navigateToLogin() {

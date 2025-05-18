@@ -1,40 +1,53 @@
-import { NgClass } from '@angular/common';
 import { Component, OnInit, signal } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { LexiconComponent } from "./lexicon/lexicon.component";
+import { SharedService } from '../shared/shared.service';
 
-export type account = {
-  name: string;
+export type Friend = {
+  username: string;
   level: number;
-  img: string;
-  online: boolean;
+  profilePic: string;
 };
 
 @Component({
   selector: 'app-home',
-  imports: [NgClass, RouterLink, LexiconComponent],
+  imports: [RouterLink, LexiconComponent],
   templateUrl: './home.component.html',
   styleUrl: './home.component.scss'
 })
 export class HomeComponent implements OnInit {
-  showingFriends = signal<account[]>([]);
-  friendsList: account[] = [
-    { name: 'John', level: 6, img: 'images/default.png', online: false },
-    { name: 'Tom', level: 12, img: 'images/default.png', online: false },
-    { name: 'Klaudie', level: 19, img: 'images/default.png', online: true },
-    { name: 'Adam', level: 100, img: 'images/default.png', online: true },
-    { name: 'Patrik', level: 54, img: 'images/default.png', online: false },
-  ];
+  constructor(public sharedService: SharedService) { }
+
+  filteredFriends = signal<Friend[]>([]);
+
+  async updateFriends() {
+    this.filteredFriends.set([]);
+    try {
+      const response = await fetch(`http://localhost:8000/profile/usernames-levels-pictures`);
+      const data = await response.json();
+      const friends = this.sharedService.friends();
+
+      const chosenFriends: Friend[] = [];
+      for (const userObj of data) {
+        if (friends.includes(userObj.username)) {
+          chosenFriends.push({
+            username: userObj.username,
+            profilePic: userObj.profile_picture,
+            level: userObj.level,
+          });
+        }
+      }
+
+      chosenFriends.sort((a, b) => a.username.localeCompare(b.username));
+
+      const sortedFriends = [...chosenFriends].slice(0, 10);
+      this.filteredFriends.set(sortedFriends);
+      
+    } catch (err) {console.error(err) }
+  }
 
   ngOnInit(): void {
-    const onlineUsers = this.friendsList.filter(user => user.online);
-    const offlineUsers = this.friendsList.filter(user => !user.online);
-
-    onlineUsers.sort((a, b) => a.name.localeCompare(b.name));
-    offlineUsers.sort((a, b) => a.name.localeCompare(b.name));
-  
-    const sortedFriends = [...onlineUsers, ...offlineUsers].slice(0, 10);
-    this.showingFriends.set(sortedFriends);
+    this.updateFriends();
   }
 
   lexiconActive: boolean = false;

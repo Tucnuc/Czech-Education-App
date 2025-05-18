@@ -3,8 +3,8 @@
         <h1>Leaderboard</h1>
         <hr>
         <div class="accounts">
-            @for (account of finalists(); track $index) {
-                <p [className]="'place'+$index" >{{ $index+1 }}. {{ account.name }} - {{ account.level }} lvl</p>
+            @for (user of finalists(); track $index) {
+                <p [className]="'place'+$index" >{{ $index+1 }}. {{ user.username }} - {{ user.level }} lvl</p>
             }
         </div>
     </div>
