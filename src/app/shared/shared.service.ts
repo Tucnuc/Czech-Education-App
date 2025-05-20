@@ -5,7 +5,7 @@ interface Account {
   username: string;
   profilePicture: string;
   darkmode: boolean;
-  friends: string[];
+  requests: string[];
   level: number;
   xp: number;
   loggedIn: boolean;
@@ -22,7 +22,7 @@ export class SharedService {
     username: 'Guest',
     profilePicture: 'images/default.png',
     darkmode: false,
-    friends: [],
+    requests: [],
     level: 0,
     xp: 0,
     loggedIn: false,
@@ -37,7 +37,7 @@ export class SharedService {
   readonly darkmode = computed(() => this.accountInfoSignal().darkmode);
   readonly level = computed(() => this.accountInfoSignal().level);
   readonly xp = computed(() => this.accountInfoSignal().xp);
-  readonly friends = computed(() => this.accountInfoSignal().friends);
+  readonly requests = computed(() => this.accountInfoSignal().requests);
   readonly loggedIn = computed(() => this.accountInfoSignal().loggedIn);
   
   // Signal pro celý objekt účtu
@@ -46,36 +46,35 @@ export class SharedService {
   constructor(@Inject(PLATFORM_ID) platformId: Object) {
     this.isBrowser = isPlatformBrowser(platformId);
     if (this.isBrowser) {
-      this.loadStoredAccount();
+      this.loadStoredUsername();
     }
   }
 
   /**
-   * Nastaví informace o účtu a volitelně je uloží do localStorage
+   * Nastaví informace o účtu a uloží pouze username do localStorage
    * @param account Informace o účtu k nastavení
-   * @param storeLocally Zda ukládat do localStorage (výchozí: true)
    */
-  setAccountInfo(account: Account, storeLocally: boolean = true): void {
+  setAccountInfo(account: Account): void {
     this.accountInfoSignal.set({ ...account });
     
-    if (storeLocally && this.isBrowser) {
-      localStorage.setItem('accountInfo', JSON.stringify(account));
+    if (this.isBrowser) {
+      localStorage.setItem('username', account.username);
     }
   }
 
   /**
    * Aktualizuje pouze některé vlastnosti účtu
    * @param partialAccount Částečné informace o účtu k aktualizaci
-   * @param storeLocally Zda ukládat do localStorage (výchozí: true)
    */
-  updateAccountInfo(partialAccount: Partial<Account>, storeLocally: boolean = true): void {
+  updateAccountInfo(partialAccount: Partial<Account>): void {
     this.accountInfoSignal.update(currentAccount => ({
       ...currentAccount,
       ...partialAccount
     }));
     
-    if (storeLocally && this.isBrowser) {
-      localStorage.setItem('accountInfo', JSON.stringify(this.accountInfoSignal()));
+    // Pouze pokud se aktualizuje username, ulož ho do localStorage
+    if (this.isBrowser && partialAccount.username) {
+      localStorage.setItem('username', partialAccount.username);
     }
   }
 
@@ -86,25 +85,54 @@ export class SharedService {
     this.accountInfoSignal.set({ ...this.defaultAccountInfo });
     
     if (this.isBrowser) {
-      localStorage.removeItem('accountInfo');
+      localStorage.removeItem('username');
       window.location.reload();
     }
   }
 
   /**
-   * Načte uložené informace o účtu z localStorage, pokud existují
+   * Načte username z localStorage a načte data uživatele z API
    */
-  private loadStoredAccount(): void {
+  private async loadStoredUsername(): Promise<void> {
     if (this.isBrowser) {
-      const storedAccount = localStorage.getItem('accountInfo');
-      if (storedAccount) {
+      const storedUsername = localStorage.getItem('username');
+      if (storedUsername) {
         try {
-          const parsedAccount = JSON.parse(storedAccount);
-          this.accountInfoSignal.set(parsedAccount);
+          // Nastav nejprve username a přihlášení
+          this.accountInfoSignal.update(current => ({
+            ...current,
+            username: storedUsername,
+            loggedIn: true
+          }));
+          
+          // Potom načti zbytek dat z API
+          await this.fetchUserData(storedUsername);
         } catch (error) {
-          console.error('Chyba při načítání účtu z localStorage:', error);
+          console.error('Chyba při načítání uživatelských dat:', error);
         }
       }
+    }
+  }
+
+  /**
+   * Získá data uživatele z API podle username
+   */
+  async fetchUserData(username: string): Promise<void> {
+    try {
+      const response = await fetch(`http://localhost:8000/profile/get-user-data/${username}`);
+      const data = await response.json();
+      
+      this.accountInfoSignal.update(current => ({
+        ...current,
+        profilePicture: data.profile_picture,
+        darkmode: data.darkmode,
+        requests: data.friends_requests,
+        level: data.level,
+        xp: data.xp,
+        loggedIn: true
+      }));
+    } catch (err) {
+      console.error('Chyba při načítání dat uživatele:', err);
     }
   }
 }

@@ -19,7 +19,12 @@
     <div class="container">
         <div class="sentenceCon">
             @for (word of wordsArray(); track $index) {
-                <div class="wordCon" [ngClass]="{ 'selectableWord': word.type === 1 || word.type === 2 }">
+                <div class="wordCon" [ngClass]="{
+                                        'selectableWord': word.type === 1 || word.type === 2,
+                                        'interpunkce': word.value === ',' || word.value === '.' || word.value === '!' || word.value === '?',
+                                        'correctWord': answersSubmitted && word.score === 1,
+                                        'incorrectWord': answersSubmitted && (!word.score || word.score < 1),
+                                     }">
                     <p (click)="selectWord(word)">{{ word.value }}</p>
                 </div>
             }
@@ -27,41 +32,48 @@
         <button mat-icon-button class="nextBtn" (click)="submitAnswers()">
             <mat-icon>subdirectory_arrow_right</mat-icon>
         </button>
-        @if (!answersSubmitted) {
-            <div class="concon">
-                @if (clickedWordType == 1) {
-                    <p class="clickedWord">{{ clickedWord }}</p>
-                    <div class="choicesCon">
-                        @for (selection of typeOneChoices(); track $index) {
+        <div class="concon">
+            @if (clickedWordType == 1) {
+                <p class="clickedWord">{{ clickedWord }}</p>
+                <div class="choicesCon">
+                    @for (selection of typeOneChoices(); track $index) {
+                        <div class="conconcon" [ngClass]="selection.class">
+                            @if (answersSubmitted) { <p class="shortcut">{{ getCorrectValue(clickedWord, selection.value) }}</p> }
                             <mat-form-field [className]="selection.class">
                                 <mat-label>{{ selection.value }}</mat-label>
                                 <mat-select (selectionChange)="saveChoices($event, selection)"
-                                            [value]="getSavedChoice(selection.value)">
+                                            [value]="getSavedChoice(selection.value)"
+                                            [disabled]="(selection.value === 'Vzor' && !getSavedChoice('Rod')) || answersSubmitted">
                                     @for (choice of selection.choices; track $index) {
                                         <mat-option [value]="choice">{{ choice }}</mat-option>
                                     }
                                 </mat-select>
                             </mat-form-field>
-                        }
-                    </div>
-                }
-                @else if (clickedWordType == 2) {
-                    <p class="clickedWord">{{ clickedWord }}</p>
-                    <div class="choicesCon">
-                        @for (selection of typeTwoChoices(); track $index) {
+                        </div>
+                    }
+                </div>
+            }
+            @else if (clickedWordType == 2) {
+                <p class="clickedWord">{{ clickedWord }}</p>
+                <div class="choicesCon">
+                    @for (selection of typeTwoChoices(); track $index) {
+                        <div class="conconcon" [ngClass]="selection.class">
+                            @if (answersSubmitted) { <p class="shortcut">{{ getCorrectValue(clickedWord, selection.value) }}</p> }
                             <mat-form-field [className]="selection.class">
                                 <mat-label>{{ selection.value }}</mat-label>
                                 <mat-select (selectionChange)="saveChoices($event, selection)"
-                                            [value]="getSavedChoice(selection.value)">
+                                            [value]="getSavedChoice(selection.value)"
+                                            [disabled]="answersSubmitted">
                                     @for (choice of selection.choices; track $index) {
                                         <mat-option [value]="choice">{{ choice }}</mat-option>
                                     }
                                 </mat-select>
                             </mat-form-field>
-                        }
-                    </div>
-                }
-            </div>
-        }
+                        </div>
+                    }
+                </div>
+            }
+        </div>
+
     </div>
 }

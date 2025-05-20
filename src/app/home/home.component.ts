@@ -19,28 +19,25 @@ export class HomeComponent implements OnInit {
   constructor(public sharedService: SharedService) { }
 
   filteredFriends = signal<Friend[]>([]);
+  friends: Friend[] = [];
 
   async updateFriends() {
     this.filteredFriends.set([]);
     try {
-      const response = await fetch(`http://localhost:8000/profile/usernames-levels-pictures`);
+      const response = await fetch(`http://localhost:8000/profile/get-friends/${this.sharedService.username()}`);
       const data = await response.json();
-      const friends = this.sharedService.friends();
 
-      const chosenFriends: Friend[] = [];
       for (const userObj of data) {
-        if (friends.includes(userObj.username)) {
-          chosenFriends.push({
-            username: userObj.username,
-            profilePic: userObj.profile_picture,
-            level: userObj.level,
-          });
-        }
+        this.friends.push({
+          username: userObj.username,
+          profilePic: userObj.profile_picture,
+          level: userObj.level,
+        });
       }
 
-      chosenFriends.sort((a, b) => a.username.localeCompare(b.username));
+      this.friends.sort((a, b) => a.username.localeCompare(b.username));
 
-      const sortedFriends = [...chosenFriends].slice(0, 10);
+      const sortedFriends = [...this.friends].slice(0, 10);
       this.filteredFriends.set(sortedFriends);
       
     } catch (err) {console.error(err) }

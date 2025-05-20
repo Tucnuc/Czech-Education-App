@@ -12,10 +12,13 @@ interface Word {
   type: number;
   data: {[key: string]: string | number};
   selectedChoices?: { [key: string]: string | number };
+  correctChoices?: { [key: string]: boolean };
+  score?: number;
 }
 
 interface Choice {
   value: string;
+  predeterment?: string[];
   choices: (string | number)[];
   class: string;
 }
@@ -55,6 +58,7 @@ export class Training2Component implements OnInit {
     },
     {
       value: 'Vzor',
+      predeterment: ['Rod'],
       choices: ['-', ],
       class: 'medium'
     },
@@ -98,23 +102,22 @@ export class Training2Component implements OnInit {
   ngOnInit(): void {
     if (this.mode !== 'custom') {
       this.requestSentence();
-
-      this.wordsArray = signal<Word[]>([
-        { value: "Ó", type: 3, data: {} },
-        { value: "ne,", type: 3, data: {} },
-        { value: "co", type: 1, data: {} },
-        { value: "si", type: 3, data: {} },
-        { value: "jen,", type: 1, data: {} },
-        { value: "počneme.", type: 2, data: {} },
-      ]);
     } 
   }
 
-  requestSentence() {
-    console.log('Větu pls tralalelo tralala')
+  async requestSentence() {
+    this.wordsArray.set([{ value: 'Generování..', type: 0, data: {} }]);
+
+    try {
+      const response = await fetch(`http://localhost:8000/generate`);
+      const data = await response.json();
+      console.log(data)
+      this.formatSentence(data.morph);
+    } catch (err) { console.error(err) }
   }
 
   async sendSentence(sentence: string): Promise<{[key: string]: {[key: string]: string | number}}> {
+    this.wordsArray.set([{ value: 'Načítání..', type: 0, data: {} }]);
     try {
       const response = await fetch(`http://localhost:8000/morph/${encodeURIComponent(sentence)}`);
       const data = await response.json();
@@ -127,6 +130,7 @@ export class Training2Component implements OnInit {
   }
 
   formatSentence(sentence: {[key: string]: {[key: string]: string | number}}) {
+    this.wordsArray.set([]);
     for (const [key, value] of Object.entries(sentence)) {
       const keys = Object.keys(value);
       if (keys.includes('Pád')) { // Podstatné jméno
@@ -139,7 +143,7 @@ export class Training2Component implements OnInit {
               Pád: value['Pád'],
               Číslo: value['Číslo'],
               Rod: value['Rod'],
-              // Vzor: value['Vzor']
+              Vzor: value['Vzor']
             }
           }
         ])
@@ -169,9 +173,8 @@ export class Training2Component implements OnInit {
           }
         ])
       }
-
-      console.log(this.wordsArray());
     }
+    console.log(this.wordsArray());
   }
 
   @ViewChild('inputElement') inputElement!: ElementRef<HTMLInputElement>;
@@ -203,12 +206,15 @@ export class Training2Component implements OnInit {
     if (existingChoice) {
       existingChoice.data[kategorie] = hodnota;
     }
-
     else {
       this.savedChoices.push({
         word: slovo,
         data: { [kategorie]: hodnota }
       });
+    }
+
+    if (kategorie === 'Rod') {
+      this.updateVzorChoices(hodnota);
     }
   }
 
@@ -232,6 +238,7 @@ export class Training2Component implements OnInit {
   answersSubmitted: boolean = false;
   submitAnswers() {
     if (this.answersSubmitted) {
+      this.resetVariables();
       this.answersSubmitted = false;
       console.log(this.mode)
       if (this.mode) {
@@ -241,13 +248,108 @@ export class Training2Component implements OnInit {
       }
     } else {
       this.answersSubmitted = true;
-      
-      // vyhodnocení
-      console.log(this.savedChoices);
 
-      this.resetVariables();
+      this.wordsArray.update(words => 
+        words.map(word => {
+          if (Object.keys(word.data).length === 0) {
+            return { ...word, score: 10 };
+          }
+          return word;
+        })
+      );
+      
+      for (const savedChoice of this.savedChoices) {
+        const wordIndex = this.wordsArray().findIndex(word => word.value === savedChoice.word);
+
+        if (wordIndex !== -1) {
+          const word = this.wordsArray()[wordIndex];
+          const correctAnswers: { [key: string]: boolean } = {};
+          let totalCorrect = 0;
+          let totalAnswered = 0;
+
+          for (const [category, userValue] of Object.entries(savedChoice.data)) {
+            if (userValue !== '-') { // Skip if user didn't provide an answer
+              totalAnswered++;
+              
+              // Get the correct value from the word's data
+              const correctValue = word.data[category];
+              
+              // Handle case insensitivity for string comparisons
+              let isCorrect = false;
+              if (typeof userValue === 'string' && typeof correctValue === 'string') {
+                isCorrect = userValue.toLowerCase() === correctValue.toLowerCase();
+              } else {
+                isCorrect = userValue === correctValue;
+              }
+              
+              correctAnswers[category] = isCorrect;
+              if (isCorrect) totalCorrect++;
+            }
+          }
+
+          this.wordsArray.update(words => 
+            words.map((w, idx) => 
+              idx === wordIndex 
+                ? { 
+                    ...w, 
+                    selectedChoices: savedChoice.data,
+                    correctChoices: correctAnswers,
+                    score: totalAnswered > 0 ? (totalCorrect / totalAnswered) : 0
+                  }
+                : w
+            )
+          );
+        }
+      }
     }
   }
+
+  updateVzorChoices(selectedRod: string | undefined) {
+    const vzorChoice = this.typeOneChoices().find(choice => choice.value === 'Vzor');
+
+    if (!vzorChoice) return;
+
+    const vzoryByRod: {[key: string]: (string)[]} = {
+      'Mužský': ['-', 'Pán', 'Hrad', 'Muž', 'Stroj', 'Předseda', 'Soudce'],
+      'Ženský': ['-', 'Žena', 'Růže', 'Píseň', 'Kost'],
+      'Střední': ['-', 'Město', 'Moře', 'Kuře', 'Stavení']
+    };
+
+    if (selectedRod && selectedRod !== '-' && vzoryByRod[selectedRod as string]) {
+      this.typeOneChoices.update(choices => 
+        choices.map(choice => 
+          choice.value === 'Vzor' 
+            ? { ...choice, choices: vzoryByRod[selectedRod as string] }
+            : choice
+        )
+      );
+
+    } else {
+      this.typeOneChoices.update(choices => 
+        choices.map(choice => 
+          choice.value === 'Vzor' 
+            ? { ...choice, choices: ['-'] }
+            : choice
+        )
+      );
+    }
+  }
+
+  getEvaluationCategories(word: Word): string[] {
+    if (!word.selectedChoices) return [];
+    return Object.keys(word.selectedChoices).filter(key => 
+      word.selectedChoices?.[key] !== '-'
+    );
+  }
+
+  getCorrectValue(word: string, category: string): string {
+  const selectedWord = this.wordsArray().find(w => w.value === word);
+  if (!selectedWord || !selectedWord.data || !selectedWord.data[category]) {
+    return '';
+  }
+  
+  return selectedWord.data[category].toString();
+}
 
   returnBack() {
     this.returningEvent.emit();

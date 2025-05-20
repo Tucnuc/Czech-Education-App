@@ -59,9 +59,17 @@ export class TrainingComponent implements OnInit {
     const vybranyDruh = this.druhy().find((druh) => druh.selected);
     if (vybranyDruh) {
       this.wordsArray.update((words) =>
-        words.map((word, i) =>
-          i === index ? { ...word, color: vybranyDruh.color, chosenType: vybranyDruh.value, shortcut: vybranyDruh.shortcut } : word
-        )
+        words.map((word, i) => {
+          if (i === index && word.type !== 0) {
+            return { 
+              ...word, 
+              color: vybranyDruh.color, 
+              chosenType: vybranyDruh.value, 
+              shortcut: vybranyDruh.shortcut 
+            };
+          }
+          return word;
+        })
       );
     }
   }
@@ -96,34 +104,22 @@ export class TrainingComponent implements OnInit {
     console.log(this.mode)
     if (this.mode !== 'custom') {
       this.requestSentence();
-
-      this.wordsArray = signal<Word[]>([
-        { value: "Kočka", type: 1 },
-        { value: "leze", type: 2 },
-        { value: "dírou,", type: 1 },
-        { value: "pes", type: 3 },
-        { value: "oknem,", type: 1 },
-        { value: "pes", type: 1 },
-        { value: "oknem.", type: 2 },
-      ]);
     }
   }
 
   async requestSentence() {
-    console.log('Větu pls tralalelo tralala')
+    this.wordsArray.set([{ value: 'Generování..', type: 0 }]);
 
     try {
       const response = await fetch(`http://localhost:8000/generate`);
       const data = await response.json();
-      console.log(data);
-      return data;
-    } catch (err) {
-      console.error(err);
-      return {};
-    }
+      
+      this.formatSentence(data.pos);
+    } catch (err) { console.error(err) }
   }
 
   async sendSentence(sentence: string): Promise<{ [key: string]: number }> {
+    this.wordsArray.set([{ value: 'Načítání..', type: 0 }]);
     try {
       const response = await fetch(`http://localhost:8000/pos/${encodeURIComponent(sentence)}`);
       const data = await response.json();
@@ -136,6 +132,7 @@ export class TrainingComponent implements OnInit {
   }
 
   formatSentence(sentence: {[key: string]: number}) {
+    this.wordsArray.set([]);
     for (const [key, value] of Object.entries(sentence)) {
       this.wordsArray.update((words) => [
         ...words,
@@ -160,7 +157,7 @@ export class TrainingComponent implements OnInit {
 
   getShortcutForType(type: number): string {
     const druh = this.druhy().find(druh => druh.value === type);
-    return druh?.shortcut || 'Neznámý';
+    return druh?.shortcut || '';
   }
 
   answersSubmitted: boolean = false;

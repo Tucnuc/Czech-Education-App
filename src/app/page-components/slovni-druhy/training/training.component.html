@@ -25,7 +25,7 @@
         </div>
         <div class="sentenceCon">
             @for (word of wordsArray(); track $index) {
-                <div class="wordCon" (click)="obarvitSlovo($index)" [style.color]="word.color">
+                <div class="wordCon" [ngClass]="({ 'interpunkce': word.type == 0 })" (click)="obarvitSlovo($index)" [style.color]="word.color">
                     <p>{{ word.value }}</p>
                     <p class="shortcut">{{ word.shortcut }}</p>
                     @if (answersSubmitted) { <p class="correctType">{{ getShortcutForType(word.type) }}</p> }

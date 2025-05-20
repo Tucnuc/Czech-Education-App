@@ -18,7 +18,7 @@ interface Account {
   username: string;
   profilePicture: string;
   darkmode: boolean;
-  friends: string[];
+  requests: string[];
   level: number;
   xp: number;
   loggedIn: boolean;
@@ -119,7 +119,7 @@ export class AccountComponent implements OnInit {
           username: data.username,
           profilePicture: data.profile_picture,
           darkmode: data.darkmode,
-          friends: data.friends,
+          requests: data.friends_requests,
           level: data.level,
           xp: data.xp,
           loggedIn: true

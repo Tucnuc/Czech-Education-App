@@ -83,8 +83,10 @@ $central-width: 800px;
 .friendsCon {
     display: grid;
     width: $central-width;
-    grid-template-columns: repeat(3, calc($central-width / 3));
+    grid-template-columns: repeat(3, 1fr);
+    grid-template-rows: repeat(3, 1fr);
     gap: 5px;
+    height: 340px;
 }
 
 .friendCon {
@@ -93,10 +95,17 @@ $central-width: 800px;
     justify-content: flex-start;
     padding: 10px;
     gap: 20px;
+    width: calc(($central-width / 3) - 5px);
+    height: 90px;
+    box-sizing: border-box;
+}
+
+.friendConCon {
     background-color: var(--mat-sys-surface-variant);
     border-radius: 5px;
-    width: calc(($central-width / 3) - 20px);
-    height: 70px;
+    width: calc(($central-width / 3) - 5px);
+    height: 110px;
+    position: relative;
 }
 
 .friendCon img {
@@ -115,4 +124,56 @@ $central-width: 800px;
 .lvl {
     font-size: 14px;
     margin-top: 2.5px;
+}
+
+.returnBtn {
+    position: fixed;
+    margin: 7.5px;
+}
+
+.paginatorCon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-top: 20px;
+    gap: 7.5px;
+}
+
+$red: #e41d18;
+$green: #038c38;
+
+.actionBtn {
+    position: absolute;
+    bottom: 5px;
+    right: 5px;
+    user-select: none;
+    cursor: pointer;
+    font-size: 15px;
+    border-radius: 5px;
+    padding: 5px 10px;
+    transition: all 150ms ease-in-out;
+}
+
+.actionBtn:hover {
+    border: solid 1px var(--mat-sys-primary);
+    color: var(--mat-sys-primary);
+}
+
+.remove {
+    border: 1px solid var(--mat-sys-secondary);
+    color: var(--mat-sys-secondary);
+}
+
+.deny {
+    border: 1px solid $red;
+    color: $red;
+}
+
+.send, .accept {
+    border: 1px solid $green;
+    color: $green;
+}
+
+.accept {
+    right: 105px;
 }

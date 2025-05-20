@@ -21,7 +21,7 @@
 .sentenceCon {
     display: flex;
     justify-content: center;
-    gap: 8px;
+    margin-right: 8px;
 }
 
 .wordCon {
@@ -32,6 +32,7 @@
     align-items: center;
     cursor: pointer;
     position: relative;
+    margin-left: 8px;
 }
 
 p {
@@ -134,4 +135,10 @@ mat-form-field, .concon {
 .returnBtn {
     position: fixed;
     margin: 7.5px;
+}
+
+.interpunkce {
+    cursor: default;
+    color: var(--mat-sidenav-content-text-color) !important;
+    margin-left: 0;
 }

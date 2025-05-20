@@ -1,43 +1,100 @@
+@if (searching) {
+    <button mat-icon-button class="returnBtn" (click)="returnBack()">
+        <mat-icon>arrow_back</mat-icon>
+    </button>
+}
+
 <div class="container">
     <div class="subCon">
-        <p>Moji přátelé</p>
+        <p>{{ !searching ? 'Moji přátelé' : 'Výsledky pro: ' + searchDisplay }}</p>
         <mat-form-field>
-            <input matInput type="search">
+            <input matInput type="search" #searchUsersInput [(ngModel)]="searchValue">
             <mat-label>Hledat uživatele</mat-label>
-            <button matSuffix mat-icon-button aria-label="Search">
+            <button matSuffix mat-icon-button aria-label="Search" (click)="searchUsers()">
                 <mat-icon>search</mat-icon>
             </button>
         </mat-form-field>
     </div>
-    <div class="buttonsCon">
-        <div class="button leftBtn" [ngClass]="{ 'active': activeTab === 'friends' }" (click)="setActiveTab('friends')">
-            <p>Přátelé</p>
-            <hr>
-        </div>
-        <div class="button rightBtn" [ngClass]="{ 'active': activeTab === 'requests' }" (click)="setActiveTab('requests')">
-            <p>Žádosti</p>
-            <hr>
-        </div>
-    </div>
-    <div class="subCon2">
-        <p>{{ displays[0] }} ({{ sharedService.friends().length }})</p>
-        <mat-form-field>
-            <input matInput type="search">
-            <mat-label>Hledat {{ displays[1] }}</mat-label>
-            <button matSuffix mat-icon-button aria-label="Search">
-                <mat-icon>search</mat-icon>
-            </button>
-        </mat-form-field>
-    </div>
-    <div class="friendsCon">
-        @for (friend of friendsList(); track $index) {
-            <div class="friendCon">
-                <img [src]="friend.profilePic" alt="profile_picture">
-                <div class="subConCon">
-                    <p class="name">{{ friend.username }}</p>
-                    <p class="lvl">Úroveň: {{ friend.level }}</p>
+    @if (searching) {
+        <div class="friendsCon">
+            @for (user of foundUsers(); track $index) {
+                <div class="friendConCon">
+                    <div class="friendCon">
+                        <img [src]="user.profilePic" alt="profile_picture">
+                        <div class="subConCon">
+                            <p class="name">{{ user.username }}</p>
+                            <p class="lvl">Úroveň: {{ user.level }}</p>
+                        </div>
+                    </div>
+                    @if (!user.nonFriend) { <div class="actionBtn send">Poslat žádost</div> }
                 </div>
+            }
+        </div>
+    }
+    @else {
+        <div class="buttonsCon">
+            <div class="button leftBtn" [ngClass]="{ 'active': activeTab === 'friends' }" (click)="setActiveTab('friends')">
+                <p>Přátelé</p>
+                <hr>
             </div>
-        }
+            <div class="button rightBtn" [ngClass]="{ 'active': activeTab === 'requests' }" (click)="setActiveTab('requests')">
+                <p>Žádosti</p>
+                <hr>
+            </div>
+        </div>
+        <div class="subCon2">
+            <p>{{ displays[0] }} ({{ activeTab === 'friends' ? friendsList().length : sharedService.requests().length }})</p>
+            <mat-form-field>
+                <input matInput type="search" [(ngModel)]="inputDisplay" #searchFriendsInput (input)="searchFriends(searchFriendsInput.value)">
+                <mat-label>Hledat {{ displays[1] }}</mat-label>
+                <button matSuffix mat-icon-button aria-label="Search">
+                    <mat-icon>search</mat-icon>
+                </button>
+            </mat-form-field>
+        </div>
+        <div class="friendsCon">
+            @if (activeTab === 'friends') {
+                @for (friend of friendsList(); track $index) {
+                    @if (friend.visible) {
+                        <div class="friendConCon">
+                            <div class="friendCon">
+                                <img [src]="friend.profilePic" alt="profile_picture">
+                                <div class="subConCon">
+                                    <p class="name">{{ friend.username }}</p>
+                                    <p class="lvl">Úroveň: {{ friend.level }}</p>
+                                </div>
+                            </div>
+                            <div class="actionBtn remove" (click)="removeFriend(friend.username)">Odebrat přítele</div>
+                        </div>
+                    }
+                }
+            } @else {
+                @for (request of requestsList(); track $index) {
+                    @if (request.visible) {
+                        <div class="friendConCon">
+                            <div class="friendCon">
+                                <img [src]="request.profilePic" alt="profile_picture">
+                                <div class="subConCon">
+                                    <p class="name">{{ request.username }}</p>
+                                    <p class="lvl">Úroveň: {{ request.level }}</p>
+                                </div>
+                            </div>
+                            <div class="actionBtn accept">Přijmout</div>
+                            <div class="actionBtn deny">Odmítnout</div>
+                        </div>
+                    }
+                }
+            }
+        </div>
+    }
+
+    <div class="paginatorCon">
+        <button mat-icon-button (click)="switchPage(false, friendsList())" [disabled]="pageNum === 0">
+            <mat-icon>chevron_left</mat-icon>
+        </button>
+        <p>{{ pageNum + 1 }}</p>
+        <button mat-icon-button (click)="switchPage(true, friendsList())" [disabled]="pageNum >= getTotalPages() - 1">
+            <mat-icon>chevron_right</mat-icon>
+        </button>
     </div>
 </div>
