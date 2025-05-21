@@ -112,7 +112,7 @@ export class Training2Component implements OnInit {
     this.wordsArray.set([{ value: 'Generování..', type: 0, data: {} }]);
 
     try {
-      const response = await fetch(`http://localhost:8000/generate`);
+      const response = await fetch(`http://localhost:8000/generate/${this.mode}`);
       const data = await response.json();
       console.log(data)
       this.formatSentence(data.morph);

@@ -114,7 +114,7 @@ export class TrainingComponent implements OnInit {
     this.wordsArray.set([{ value: 'Generování..', type: 0 }]);
 
     try {
-      const response = await fetch(`http://localhost:8000/generate`);
+      const response = await fetch(`http://localhost:8000/generate/${this.mode}`);
       const data = await response.json();
       
       this.formatSentence(data.pos);
