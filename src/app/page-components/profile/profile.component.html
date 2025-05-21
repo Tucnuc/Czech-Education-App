@@ -1,31 +1,92 @@
-<div class="container">
-    <div class="subCon">
-        <div class="profileCon">
-            <img [src]="sharedService.profilePicture()" class="profileImg" alt="profile image">
-            <div class="profileChangeContainer">
-                <div class="subConCon">
-                    <p class="bigP">Jméno: {{ sharedService.username() }}</p>
-                    <button mat-icon-button>
-                        <mat-icon>edit_square</mat-icon>
-                    </button>
-                </div>
-                <div class="subConCon">
-                    <p class="bigP">Heslo: ********</p>
-                    <button mat-icon-button>
-                        <mat-icon>edit_square</mat-icon>
-                    </button>
-                </div>
-                <p>Úroveň: {{ sharedService.level() }}</p>
-                <p>Celkové XP: {{ sharedService.xp() }}</p>
-            </div>
-        </div>
-        <hr>
-        <div class="otherSettings">
-            <div class="darkModeCon">
-                <p>Dark Mode</p>
-                <mat-slide-toggle [(ngModel)]="darkMode" (change)="toggleDarkMode()"></mat-slide-toggle>
-            </div>
-            <button mat-raised-button (click)="navigateToLogin()">{{ (sharedService.loggedIn() ? 'Odhlásit se' : 'Přihlásit se') }}</button>
-        </div>
+@if (changingData) {
+    <button mat-icon-button class="returnBtn" (click)="returnBack()">
+        <mat-icon style="width: 24px; height: 24px; font-size: 24px; padding: 0;">arrow_back</mat-icon>
+    </button>
+}
+
+@if (changeSuccessful) { 
+    <div class="announcer">
+        <svg id="checkmark" xmlns="http://www.w3.org/2000/svg" version="1.1" viewBox="0 0 638.61 638.61">
+            <!-- Generator: Adobe Illustrator 29.5.0, SVG Export Plug-In . SVG Version: 2.1.0 Build 137)  -->
+            <defs>
+                <style>
+                .st0 {
+                    fill: white;
+                    fill-rule: evenodd;
+                }
+                </style>
+            </defs>
+            <path class="st0" d="M628.85,124.64c13.02,13.02,13.02,34.12,0,47.14l-365.76,365.76c-12.93,12.93-33.88,13.03-46.93.21L9.98,335.25c-13.13-12.9-13.32-34-.42-47.14l23.36-23.78c12.9-13.13,34-13.32,47.14-.42l159.05,156.21L558.14,101.07c13.02-13.02,34.12-13.02,47.14,0l23.57,23.57Z"/>
+        </svg>
+        <p>{{ successDisplay }} úspěšně změněno</p>
     </div>
+}
+
+<div class="container">
+    @if (changingData) {
+        <p class="changeHeading">Změna {{ displayValue }}</p>
+        <div class="inputCon">
+            <mat-form-field>
+                <mat-label>Heslo</mat-label>
+                <input [(ngModel)]="passwordValue" type="password" matInput>
+            </mat-form-field>
+            @if (passError) { <p class="info error">Nesprávné heslo</p> }
+        </div>
+        @if (changeType === 'username') {
+            <div class="inputCon">
+                <mat-form-field>
+                    <mat-label>Nové jméno</mat-label>
+                    <input [(ngModel)]="changeValue" type="text" matInput>
+                </mat-form-field>
+                <p class="info hint">Min. 4 znaky, Max 16 znaků</p>
+                @if (valueError) { <p class="info error">Nesprávné jméno</p> }
+            </div>
+        }
+        @else {
+            <div class="inputCon">
+                <mat-form-field>
+                    <mat-label>Nové heslo</mat-label>
+                    <input [(ngModel)]="changeValue" type="password" matInput>
+                </mat-form-field>
+                <p class="info hint">Min. 4 znaky</p>
+                @if (valueError) { <p class="info error">Nesprávné heslo</p> }
+            </div>
+        }
+        <button mat-icon-button class="nextBtn" (click)="requestChange()">
+            <mat-icon>subdirectory_arrow_right</mat-icon>
+        </button>
+    }
+    @else {
+        <div class="subCon">
+            <div class="profileCon">
+                <img [src]="sharedService.profilePicture()" class="profileImg" alt="profile image">
+                <div class="profileChangeContainer">
+                    <div class="subConCon">
+                        <p class="bigP">Jméno: {{ sharedService.username() }}</p>
+                        <button mat-icon-button (click)="changeUsername()" class="changeBtn"
+                            [disabled]="sharedService.username() == 'Guest'">
+                            <mat-icon>edit_square</mat-icon>
+                        </button>
+                    </div>
+                    <div class="subConCon">
+                        <p class="bigP">Heslo: ********</p>
+                        <button mat-icon-button (click)="changePassword()" class="changeBtn"
+                            [disabled]="sharedService.username() == 'Guest'">
+                            <mat-icon>edit_square</mat-icon>
+                        </button>
+                    </div>
+                    <p class="smallP">Úroveň: {{ sharedService.level() }}</p>
+                    <p>Celkové XP: {{ sharedService.xp() }}</p>
+                </div>
+            </div>
+            <hr>
+            <div class="otherSettings">
+                <div class="darkModeCon">
+                    <p>Dark Mode</p>
+                    <mat-slide-toggle [(ngModel)]="darkMode" (change)="toggleDarkMode()"></mat-slide-toggle>
+                </div>
+                <button mat-raised-button (click)="navigateToLogin()">{{ (sharedService.loggedIn() ? 'Odhlásit se' : 'Přihlásit se') }}</button>
+            </div>
+        </div>
+    }
 </div>

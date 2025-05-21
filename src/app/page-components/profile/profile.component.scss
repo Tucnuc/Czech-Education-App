@@ -17,7 +17,12 @@ p {
     margin-block: 9px;
 }
 .bigP {
-    font-size: 20px;
+    font-size: 22px;
+    font-weight: 450;
+}
+
+.smallP {
+    margin-block: 5px;
 }
 
 .subCon {
@@ -34,7 +39,7 @@ p {
     display: flex;
     align-items: center;
     justify-content: center;
-    gap: 100px;
+    gap: 70px;
 }
 
 .profileImg {
@@ -54,7 +59,7 @@ p {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    width: 220px;
+    width: 310px;
 }
 
 .otherSettings {
@@ -75,4 +80,86 @@ hr {
     height: 2px;
     width: 550px;
     background: var(--mat-sys-outline-variant);
+}
+
+.returnBtn {
+    position: fixed;
+    margin: 7.5px;
+}
+
+.mat-icon, .nextBtn{
+    font-size: 40px;
+    width: 45px;
+    height: 45px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+.mat-icon {
+    padding-left: 7px;
+}
+
+mat-form-field, .changeHeading {
+    width: 400px;
+}
+
+.changeHeading {
+    font-size: 30px;
+    font-weight: 450;
+}
+
+.changeBtn mat-icon {
+    font-size: 25px;
+    padding-left: 0;
+    left: 50%;
+    top: 50%;
+    transform: translateX(-50%) translateY(-50%);
+}
+
+.inputCon {
+    position: relative;
+}
+
+p {
+    margin: 0;
+}
+
+.info {
+    position: absolute;
+    font-size: 14px;
+    bottom: 1px;
+}
+
+.error {
+    left: 5px;
+    color: #fb5751;
+}
+
+.hint {
+    right: 5px;
+    color: #767676;
+}
+
+.announcer {
+    position: absolute;
+    font-size: 14px;
+    top: 0;
+    left: 75px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 10px;
+    padding: 10px;
+    background-color: #77c695;
+    border-bottom-left-radius: 10px;
+    border-bottom-right-radius: 10px;
+}
+
+.announcer svg {
+    width: 30px;
+}
+
+.announcer p {
+    color: white;
+    font-size: 18px;
 }

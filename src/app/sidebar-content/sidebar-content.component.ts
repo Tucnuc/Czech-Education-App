@@ -1,11 +1,12 @@
 import { NgStyle } from '@angular/common';
-import { Component, computed, Input, OnInit, signal } from '@angular/core';
+import { Component, Input, signal } from '@angular/core';
 import { trigger, state, style, animate, transition } from '@angular/animations';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatListModule } from '@angular/material/list'
 import { RouterModule, Router } from '@angular/router';
 import { SharedService } from '../shared/shared.service';
+import { TruncatePipe } from '../shared/pipes/truncate.pipe';
 
 export type MenuItem = {
   icon: string;
@@ -13,19 +14,9 @@ export type MenuItem = {
   route: string;
 }
 
-interface Account {
-  username: string;
-  profilePicture: string;
-  darkmode: boolean;
-  friends: string[];
-  level: number;
-  xp: number;
-  loggedIn: boolean;
-}
-
 @Component({
   selector: 'app-sidebar-content',
-  imports: [MatListModule, MatIconModule, MatButtonModule, RouterModule, NgStyle],
+  imports: [MatListModule, MatIconModule, MatButtonModule, RouterModule, NgStyle, TruncatePipe],
   templateUrl: './sidebar-content.component.html',
   styleUrl: './sidebar-content.component.scss',
   animations: [

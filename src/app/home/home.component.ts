@@ -2,6 +2,7 @@ import { Component, OnInit, signal } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { LexiconComponent } from "./lexicon/lexicon.component";
 import { SharedService } from '../shared/shared.service';
+import { TruncatePipe } from '../shared/pipes/truncate.pipe';
 
 export type Friend = {
   username: string;
@@ -11,7 +12,7 @@ export type Friend = {
 
 @Component({
   selector: 'app-home',
-  imports: [RouterLink, LexiconComponent],
+  imports: [RouterLink, LexiconComponent, TruncatePipe],
   templateUrl: './home.component.html',
   styleUrl: './home.component.scss'
 })

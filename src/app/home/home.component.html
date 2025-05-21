@@ -11,7 +11,7 @@
             @for (friend of filteredFriends(); track $index) {
                 <div class="friend">
                     <img [src]="friend.profilePic" alt="friend">
-                    <p class="name">{{ friend.username }}</p>
+                    <p class="name">{{ friend.username | truncate }}</p>
                     <p>{{ friend.level + ' lvl'}}</p>
                 </div>
             }

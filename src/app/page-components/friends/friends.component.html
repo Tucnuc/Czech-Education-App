@@ -8,9 +8,10 @@
     <div class="subCon">
         <p>{{ !searching ? 'Moji přátelé' : 'Výsledky pro: ' + searchDisplay }}</p>
         <mat-form-field>
-            <input matInput type="search" #searchUsersInput [(ngModel)]="searchValue">
+            <input matInput type="search" #searchUsersInput [(ngModel)]="searchValue"
+                [disabled]="sharedService.username() == 'Guest'">
             <mat-label>Hledat uživatele</mat-label>
-            <button matSuffix mat-icon-button aria-label="Search" (click)="searchUsers()">
+            <button matSuffix mat-icon-button aria-label="Search" (click)="searchUsers()" [disabled]="sharedService.username() == 'Guest'">
                 <mat-icon>search</mat-icon>
             </button>
         </mat-form-field>
@@ -26,7 +27,7 @@
                             <p class="lvl">Úroveň: {{ user.level }}</p>
                         </div>
                     </div>
-                    @if (!user.nonFriend) { <div class="actionBtn send">Poslat žádost</div> }
+                    @if (!user.nonFriend) { <div (click)="sendRequest(user.username)" class="actionBtn send" [ngClass]="{ 'nonActive': user.recentlySent}">Poslat žádost</div> }
                 </div>
             }
         </div>
@@ -45,9 +46,10 @@
         <div class="subCon2">
             <p>{{ displays[0] }} ({{ activeTab === 'friends' ? friendsList().length : sharedService.requests().length }})</p>
             <mat-form-field>
-                <input matInput type="search" [(ngModel)]="inputDisplay" #searchFriendsInput (input)="searchFriends(searchFriendsInput.value)">
+                <input matInput type="search" [(ngModel)]="inputDisplay" #searchFriendsInput
+                    (input)="searchFriends(searchFriendsInput.value)" [disabled]="sharedService.username() == 'Guest'">
                 <mat-label>Hledat {{ displays[1] }}</mat-label>
-                <button matSuffix mat-icon-button aria-label="Search">
+                <button matSuffix mat-icon-button aria-label="Search" [disabled]="sharedService.username() == 'Guest'">
                     <mat-icon>search</mat-icon>
                 </button>
             </mat-form-field>
@@ -79,8 +81,8 @@
                                     <p class="lvl">Úroveň: {{ request.level }}</p>
                                 </div>
                             </div>
-                            <div class="actionBtn accept">Přijmout</div>
-                            <div class="actionBtn deny">Odmítnout</div>
+                            <div class="actionBtn accept" (click)="acceptRequest(request.username)">Přijmout</div>
+                            <div class="actionBtn deny" (click)="denyRequest(request.username)">Odmítnout</div>
                         </div>
                     }
                 }

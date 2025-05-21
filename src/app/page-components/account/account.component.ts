@@ -60,6 +60,7 @@ export class AccountComponent implements OnInit {
 
   checkName() {
     if (!this.register) return;
+    if (this.name == 'Guest' || this.name == 'guest') return;
     if (this.usernames) {
       if (this.usernames.find(username => username === this.name) || this.name.length < 4 || this.name.length > 16) this.checks.nameCheck = false;
       else this.checks.nameCheck = true;

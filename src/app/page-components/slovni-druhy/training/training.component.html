@@ -32,7 +32,7 @@
                 </div>
             }
         </div>
-        <button mat-icon-button class="nextBtn" (click)="submitAnswers()">
+        <button mat-icon-button class="nextBtn" [disabled]="alreadyRequesting" (click)="submitAnswers()">
             <mat-icon>subdirectory_arrow_right</mat-icon>
         </button>
         @if (!answersSubmitted) {

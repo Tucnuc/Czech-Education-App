@@ -177,3 +177,14 @@ $green: #038c38;
 .accept {
     right: 105px;
 }
+
+.nonActive {
+    border: 1px solid var(--mat-sys-outline-variant);
+    color: var(--mat-sys-outline-variant);
+    cursor: default;
+}
+
+.nonActive:hover {
+    border: 1px solid var(--mat-sys-outline-variant);
+    color: var(--mat-sys-outline-variant);
+}

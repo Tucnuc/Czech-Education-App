@@ -105,7 +105,10 @@ export class Training2Component implements OnInit {
     } 
   }
 
-  async requestSentence() {
+  alreadyRequesting: boolean = false;
+  async requestSentence(retryCount: number = 0, maxRetries: number = 3) {
+    if (retryCount === 0) this.alreadyRequesting = true;
+
     this.wordsArray.set([{ value: 'Generování..', type: 0, data: {} }]);
 
     try {
@@ -113,7 +116,21 @@ export class Training2Component implements OnInit {
       const data = await response.json();
       console.log(data)
       this.formatSentence(data.morph);
-    } catch (err) { console.error(err) }
+    } catch (err) {
+      console.error(`Attempt ${retryCount + 1} failed:`, err);
+
+      if (retryCount < maxRetries) {
+        const retryDelay = 1000 * (retryCount + 1);
+
+        this.wordsArray.set([{ value: `Opakuji, pokus ${retryCount + 1}...`, type: 10, data: {} }]);
+
+        setTimeout(() => {
+          this.requestSentence(retryCount + 1, maxRetries);
+        }, retryDelay);
+      } else {
+        this.wordsArray.set([{ value: 'Chyba připojení k serveru', type: 10, data: {} }]);
+      }
+    }
   }
 
   async sendSentence(sentence: string): Promise<{[key: string]: {[key: string]: string | number}}> {
@@ -174,7 +191,7 @@ export class Training2Component implements OnInit {
         ])
       }
     }
-    console.log(this.wordsArray());
+    this.alreadyRequesting = false;
   }
 
   @ViewChild('inputElement') inputElement!: ElementRef<HTMLInputElement>;
@@ -268,14 +285,15 @@ export class Training2Component implements OnInit {
           let totalAnswered = 0;
 
           for (const [category, userValue] of Object.entries(savedChoice.data)) {
-            if (userValue !== '-') { // Skip if user didn't provide an answer
+            const correctValue = word.data[category];
+            let isCorrect = false;
+            if (userValue === '-' && (!correctValue || correctValue === '' || correctValue === '-')) {
+              isCorrect = true;
+              totalAnswered++;
+            }
+            else if (userValue !== '-') {
               totalAnswered++;
               
-              // Get the correct value from the word's data
-              const correctValue = word.data[category];
-              
-              // Handle case insensitivity for string comparisons
-              let isCorrect = false;
               if (typeof userValue === 'string' && typeof correctValue === 'string') {
                 isCorrect = userValue.toLowerCase() === correctValue.toLowerCase();
               } else {

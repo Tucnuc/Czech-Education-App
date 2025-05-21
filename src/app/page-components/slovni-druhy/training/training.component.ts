@@ -107,7 +107,10 @@ export class TrainingComponent implements OnInit {
     }
   }
 
-  async requestSentence() {
+  alreadyRequesting: boolean = false;
+  async requestSentence(retryCount: number = 0, maxRetries: number = 3) {
+    if (retryCount === 0) this.alreadyRequesting = true;
+
     this.wordsArray.set([{ value: 'Generování..', type: 0 }]);
 
     try {
@@ -115,7 +118,21 @@ export class TrainingComponent implements OnInit {
       const data = await response.json();
       
       this.formatSentence(data.pos);
-    } catch (err) { console.error(err) }
+    } catch (err) {
+      console.error(`Attempt ${retryCount + 1} failed:`, err);
+
+      if (retryCount < maxRetries) {
+        const retryDelay = 1000 * (retryCount + 1);
+
+        this.wordsArray.set([{ value: `Opakuji, pokus ${retryCount + 1}...`, type: 0 }]);
+
+        setTimeout(() => {
+          this.requestSentence(retryCount + 1, maxRetries);
+        }, retryDelay);
+      } else {
+        this.wordsArray.set([{ value: 'Chyba připojení k serveru', type: 0 }]);
+      }
+    }
   }
 
   async sendSentence(sentence: string): Promise<{ [key: string]: number }> {
@@ -139,6 +156,7 @@ export class TrainingComponent implements OnInit {
         { value: key, type: value }
       ])
     }
+    this.alreadyRequesting = false;
   }
 
   @ViewChild('inputElement') inputElement!: ElementRef<HTMLInputElement>;

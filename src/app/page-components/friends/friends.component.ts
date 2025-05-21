@@ -18,6 +18,7 @@ interface User {
   profilePic: string;
   level: number;
   nonFriend: boolean;
+  recentlySent: boolean;
 }
 
 @Component({
@@ -145,7 +146,8 @@ export class FriendsComponent implements OnInit {
           username: user.username,
           profilePic: user.profile_picture,
           level: user.level,
-          nonFriend: (friendUsernames.includes(user.username) || user.username === currentUsername)
+          nonFriend: (friendUsernames.includes(user.username) || user.username === currentUsername),
+          recentlySent: false
         }));
       
       this.foundUsers.set(matchedUsers);
@@ -235,6 +237,33 @@ export class FriendsComponent implements OnInit {
     try {
       await fetch(`http://localhost:8000/profile/remove-friend/${this.sharedService.username()}/${friend}`);
       await this.updateFriendsList();
+    } catch (err) {console.error(err) }
+  }
+
+  async acceptRequest(user: string) {
+    try {
+      await fetch(`http://localhost:8000/profile/add-friend/${this.sharedService.username()}/${user}`);
+      window.location.reload();
+    } catch (err) {console.error(err) }
+  }
+  async denyRequest(user: string) {
+    try {
+      await fetch(`http://localhost:8000/profile/decline-friend-request/${this.sharedService.username()}/${user}`);
+      window.location.reload();
+    } catch (err) {console.error(err) }
+  }
+  async sendRequest(user: string) {
+    try {
+      const response = await fetch(`http://localhost:8000/profile/add-friend-request/${this.sharedService.username()}/${user}`);
+      if (response.ok) {
+        this.foundUsers.update(users => 
+          users.map(foundUser => 
+            foundUser.username === user 
+              ? { ...foundUser, recentlySent: true }
+              : foundUser
+          )
+        );
+      }
     } catch (err) {console.error(err) }
   }
 
