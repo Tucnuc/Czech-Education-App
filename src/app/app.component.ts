@@ -1,4 +1,4 @@
-import { Component, computed, signal } from '@angular/core';
+import { Component, computed, Inject, OnInit, signal, PLATFORM_ID } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
 import { trigger, state, style, animate, transition } from '@angular/animations';
 import { MatToolbarModule } from '@angular/material/toolbar';
@@ -6,7 +6,7 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatSidenavModule } from '@angular/material/sidenav';
 import { SidebarContentComponent } from './sidebar-content/sidebar-content.component';
-import { NgStyle } from '@angular/common';
+import { NgStyle, isPlatformBrowser } from '@angular/common';
 
 @Component({
   selector: 'app-root',
@@ -24,10 +24,21 @@ import { NgStyle } from '@angular/common';
     ]),
   ]
 })
-export class AppComponent {
+export class AppComponent implements OnInit {
+  constructor(@Inject(PLATFORM_ID) private platformId: Object) {}
+
   title = 'cestina';
 
   collapsed = signal(false);
 
   sidebarWidth = computed(() => this.collapsed() ? '65px' : '275px')
+
+  ngOnInit(): void {
+    if (isPlatformBrowser(this.platformId)) {
+      const screenWidth = window.innerWidth;
+      if (screenWidth < 1200) {
+        this.collapsed.set(true);
+      }
+    }
+  }
 }

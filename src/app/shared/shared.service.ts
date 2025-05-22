@@ -8,6 +8,7 @@ interface Account {
   requests: string[];
   level: number;
   xp: number;
+  maxXP: number;
   loggedIn: boolean;
 }
 
@@ -25,6 +26,7 @@ export class SharedService {
     requests: [],
     level: 0,
     xp: 0,
+    maxXP: 0,
     loggedIn: false,
   };
 
@@ -37,6 +39,7 @@ export class SharedService {
   readonly darkmode = computed(() => this.accountInfoSignal().darkmode);
   readonly level = computed(() => this.accountInfoSignal().level);
   readonly xp = computed(() => this.accountInfoSignal().xp);
+  readonly maxXP = computed(() => this.accountInfoSignal().maxXP);
   readonly requests = computed(() => this.accountInfoSignal().requests);
   readonly loggedIn = computed(() => this.accountInfoSignal().loggedIn);
   
@@ -67,9 +70,16 @@ export class SharedService {
    * @param partialAccount Částečné informace o účtu k aktualizaci
    */
   updateAccountInfo(partialAccount: Partial<Account>): void {
+    let maxXPUpdate = {};
+    if (partialAccount.level !== undefined) {
+      const newMaxXP = this.calculateMaxXP(partialAccount.level);
+      maxXPUpdate = { maxXP: newMaxXP };
+    }
+
     this.accountInfoSignal.update(currentAccount => ({
       ...currentAccount,
-      ...partialAccount
+      ...partialAccount,
+      ...maxXPUpdate
     }));
     
     // Pouze pokud se aktualizuje username, ulož ho do localStorage
@@ -114,6 +124,18 @@ export class SharedService {
     }
   }
 
+  private calculateMaxXP(level: number): number {
+    // Base XP is 50 for level 1
+    const baseXP = 50;
+    
+    // For level 1, max XP is 50
+    if (level === 0) return 0;
+    
+    // For higher levels, apply the multiplier of 1.15 for each level
+    // floor to get a clean number without decimals
+    return Math.floor(baseXP * Math.pow(1.1, level-1));
+  }
+
   /**
    * Získá data uživatele z API podle username
    */
@@ -121,6 +143,8 @@ export class SharedService {
     try {
       const response = await fetch(`http://localhost:8000/profile/get-user-data/${username}`);
       const data = await response.json();
+
+      const calculatedMaxXP = this.calculateMaxXP(data.level);
       
       this.accountInfoSignal.update(current => ({
         ...current,
@@ -129,6 +153,7 @@ export class SharedService {
         requests: data.friends_requests,
         level: data.level,
         xp: data.xp,
+        maxXP: calculatedMaxXP,
         loggedIn: true
       }));
     } catch (err) {

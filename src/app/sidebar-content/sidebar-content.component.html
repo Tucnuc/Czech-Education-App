@@ -18,7 +18,8 @@
             <img [src]="sharedService.profilePicture()" class="profileImg" alt="profile image"/>
             <div class="textContainer">
                 <h3>{{ sharedService.username() | truncate }}</h3>
-                <p>Úroveň: {{ sharedService.level() }}</p>
+                <p>Lvl: {{ sharedService.level() }}</p>
+                <p>XP: {{ sharedService.xp() + '/' + sharedService.maxXP() }}</p>
             </div>
         </div>
         <button mat-icon-button>

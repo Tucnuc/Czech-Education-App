@@ -19,7 +19,7 @@ a {
     @include mat.elevation(3);
     padding-block: 7.5px;
     border-radius: 10px;
-    height: 60px;
+    height: 80px;
     overflow: hidden;
 }
 
@@ -44,6 +44,10 @@ img {
     justify-content: center;
 }
 
+.textContainer p {
+    min-width: 100px;
+}
+
 h3, p {
     margin: 0;
 }
@@ -58,5 +62,5 @@ p {
     display: flex;
     justify-content: center;
     align-items: center;
-    height: 60px;
+    height: 80px;
 }

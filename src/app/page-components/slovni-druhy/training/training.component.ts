@@ -4,6 +4,7 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
+import { SharedService } from '../../../shared/shared.service';
 
 interface Word {
   value: string;
@@ -28,6 +29,8 @@ interface Druh {
   styleUrl: './training.component.scss'
 })
 export class TrainingComponent implements OnInit {
+  constructor(private sharedService: SharedService) { }
+
   @Input() mode: string = '';
   @Output() returningEvent = new EventEmitter;
 
@@ -181,6 +184,7 @@ export class TrainingComponent implements OnInit {
   answersSubmitted: boolean = false;
   submitAnswers() {
     if (this.answersSubmitted) {
+      // Reset and move to next question logic (keep as is)
       this.answersSubmitted = false;
       this.wordsArray.update((words) =>
         words.map((word) => ({ ...word, color: undefined, chosenType: undefined, shortcut: undefined }))
@@ -193,18 +197,104 @@ export class TrainingComponent implements OnInit {
       }
 
     } else {
+      // Calculate results and award XP
       this.answersSubmitted = true;
+      
+      // Count correct answers
+      let correctAnswers = 0;
+      let totalAnswerable = 0;
+      
       this.wordsArray.update((words) =>
-        words.map((word) =>
-          word.type === word.chosenType
-            ? { ...word, color: 'green' }
-            : { ...word, color: 'red' }
-        )
+        words.map((word) => {
+          // Skip words with type 0 (punctuation/non-categorized)
+          if (word.type === 0) {
+            return word;
+          }
+          
+          totalAnswerable++;
+          
+          // Check if answer is correct
+          if (word.type === word.chosenType) {
+            correctAnswers++;
+            return { ...word, color: 'green' };
+          } else {
+            return { ...word, color: 'red' };
+          }
+        })
       );
+      
+      // Calculate XP gain
+      if (totalAnswerable > 0) {
+        let xpGain = correctAnswers * 5; // Base XP: 5 per correct word
+        
+        // Perfect score bonus (1.1× multiplier)
+        if (correctAnswers === totalAnswerable) {
+          xpGain = Math.floor(xpGain * 1.1);
+        }
+        
+        // Apply difficulty multiplier
+        let difficultyMultiplier = 1;
+        switch (this.mode) {
+          case 'easy':
+            difficultyMultiplier = 0.5;
+            break;
+          case 'normal':
+            difficultyMultiplier = 1;
+            break;
+          case 'hard':
+            difficultyMultiplier = 1.5;
+            break;
+          default:
+            difficultyMultiplier = 0.25;
+        }
+        
+        xpGain = Math.floor(xpGain * difficultyMultiplier);
+        
+        // Award XP to user
+        if (xpGain > 0) {
+          this.awardXP(xpGain);
+        }
+      }
+      
+      // Reset selection state
       this.druhy.update((druhy) =>
         druhy.map((druh) => ({ ...druh, selected: false }))
       );
     }
+  }
+
+  awardXP(xpAmount: number): void {
+    // Only award XP if user is logged in
+    if (!this.sharedService.loggedIn()) return;
+    
+    // Get current user stats
+    const currentXP = this.sharedService.xp();
+    const currentLevel = this.sharedService.level();
+    const maxXP = this.sharedService.maxXP();
+    
+    // Calculate new XP
+    let newXP = currentXP + xpAmount;
+    let newLevel = currentLevel;
+    
+    // Check for level up
+    if (newXP >= maxXP) {
+      newXP -= maxXP;
+      newLevel++;
+    }
+    
+    // Update user stats
+    this.sharedService.updateAccountInfo({
+      level: newLevel,
+      xp: newXP
+    });
+    
+    this.saveUserProgress(newLevel, newXP);
+  }
+
+  async saveUserProgress(level: number, xp: number): Promise<void> {
+    try {
+      await fetch(`http://localhost:8000/profile/update_progress/${this.sharedService.username()}/${xp}/${level}`);
+    } catch (err) { console.error('Failed to save progress:', err) }
   }
 
   returnBack() {

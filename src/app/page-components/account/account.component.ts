@@ -21,6 +21,7 @@ interface Account {
   requests: string[];
   level: number;
   xp: number;
+  maxXP: number;
   loggedIn: boolean;
 }
 
@@ -92,6 +93,12 @@ export class AccountComponent implements OnInit {
     }
   }
 
+  private calculateMaxXP(level: number): number {
+    const baseXP = 50;
+    if (level === 0) return baseXP;
+    return Math.floor(baseXP * Math.pow(1.15, level-1));
+  }
+
   async proceed() {
     if (this.register) {
       if (this.checks.nameCheck && this.checks.passwordCheck) {
@@ -123,6 +130,7 @@ export class AccountComponent implements OnInit {
           requests: data.friends_requests,
           level: data.level,
           xp: data.xp,
+          maxXP: this.calculateMaxXP(data.level),
           loggedIn: true
         };
 

@@ -75,8 +75,8 @@
                             <mat-icon>edit_square</mat-icon>
                         </button>
                     </div>
-                    <p class="smallP">Úroveň: {{ sharedService.level() }}</p>
-                    <p>Celkové XP: {{ sharedService.xp() }}</p>
+                    <p class="smallP">Level: {{ sharedService.level() }}</p>
+                    <p>XP: {{ sharedService.xp() + '/' + sharedService.maxXP() }}</p>
                 </div>
             </div>
             <hr>

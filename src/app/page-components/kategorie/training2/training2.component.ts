@@ -6,6 +6,7 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
 import {MatSelectModule} from '@angular/material/select';
+import { SharedService } from '../../../shared/shared.service';
 
 interface Word {
   value: string;
@@ -35,6 +36,8 @@ interface Choice2 {
   styleUrl: './training2.component.scss'
 })
 export class Training2Component implements OnInit {
+  constructor(private sharedService: SharedService) { }
+
   @Input() mode: string = '';
   @Output() returningEvent = new EventEmitter;
 
@@ -100,6 +103,7 @@ export class Training2Component implements OnInit {
   veta = 'Kocour leze oknem, pes dírou.';
 
   ngOnInit(): void {
+    console.log(this.mode);
     if (this.mode !== 'custom') {
       this.requestSentence();
     } 
@@ -257,7 +261,6 @@ export class Training2Component implements OnInit {
     if (this.answersSubmitted) {
       this.resetVariables();
       this.answersSubmitted = false;
-      console.log(this.mode)
       if (this.mode) {
         this.requestSentence();
       } else {
@@ -265,7 +268,8 @@ export class Training2Component implements OnInit {
       }
     } else {
       this.answersSubmitted = true;
-
+      
+      // Reset word scoring
       this.wordsArray.update(words => 
         words.map(word => {
           if (Object.keys(word.data).length === 0) {
@@ -275,6 +279,12 @@ export class Training2Component implements OnInit {
         })
       );
       
+      // Tracking variables for XP calculations
+      let totalWords = 0;
+      let correctWords = 0;
+      let totalCorrectCategories = 0;
+      
+      // Process each saved choice
       for (const savedChoice of this.savedChoices) {
         const wordIndex = this.wordsArray().findIndex(word => word.value === savedChoice.word);
 
@@ -284,9 +294,13 @@ export class Training2Component implements OnInit {
           let totalCorrect = 0;
           let totalAnswered = 0;
 
+          // Count this as a word being evaluated
+          totalWords++;
+          
           for (const [category, userValue] of Object.entries(savedChoice.data)) {
             const correctValue = word.data[category];
             let isCorrect = false;
+            
             if (userValue === '-' && (!correctValue || correctValue === '' || correctValue === '-')) {
               isCorrect = true;
               totalAnswered++;
@@ -301,10 +315,22 @@ export class Training2Component implements OnInit {
               }
               
               correctAnswers[category] = isCorrect;
-              if (isCorrect) totalCorrect++;
+              
+              // Count correct categories for XP
+              if (isCorrect) {
+                totalCorrect++;
+                totalCorrectCategories++;
+              }
             }
           }
 
+          // A word is fully correct if all answered categories are correct
+          const wordFullyCorrect = totalAnswered > 0 && totalCorrect === totalAnswered;
+          if (wordFullyCorrect) {
+            correctWords++;
+          }
+
+          // Update the word with results
           this.wordsArray.update(words => 
             words.map((w, idx) => 
               idx === wordIndex 
@@ -319,7 +345,72 @@ export class Training2Component implements OnInit {
           );
         }
       }
+      
+      // Calculate and award XP
+      if (totalWords > 0 && this.sharedService.loggedIn()) {
+        this.awardXP(totalCorrectCategories, correctWords, totalWords);
+      }
     }
+  }
+
+  private awardXP(correctCategories: number, correctWords: number, totalWords: number): void {
+    if (!this.sharedService.loggedIn()) return;
+    // Base XP calculation:
+    // - 2 XP per correct category
+    // - Additional 3 XP per fully correct word
+    let xpGain = (correctCategories * 2) + (correctWords * 3);
+    
+    // Perfect sentence bonus (1.2× multiplier)
+    if (correctWords === totalWords && totalWords > 0) {
+      xpGain = Math.floor(xpGain * 1.2);
+    }
+    
+    // Apply difficulty multiplier
+    let difficultyMultiplier = 1;
+    switch (this.mode) {
+      case 'easy':
+        difficultyMultiplier = 0.5;
+        break;
+      case 'normal':
+        difficultyMultiplier = 1;
+        break;
+      case 'hard':
+        difficultyMultiplier = 1.5;
+        break;
+      default:
+        difficultyMultiplier = 0.25;
+    }
+    
+    xpGain = Math.floor(xpGain * difficultyMultiplier);
+    
+    // Get current user stats
+    const currentXP = this.sharedService.xp();
+    const currentLevel = this.sharedService.level();
+    const maxXP = this.sharedService.maxXP();
+    
+    // Calculate new XP
+    let newXP = currentXP + xpGain;
+    let newLevel = currentLevel;
+    
+    // Check for level up
+    if (newXP >= maxXP) {
+      newXP -= maxXP;
+      newLevel++;
+    }
+    
+    // Update user stats
+    this.sharedService.updateAccountInfo({
+      level: newLevel,
+      xp: newXP
+    });
+    
+    this.saveUserProgress(newLevel, newXP);
+  }
+
+  async saveUserProgress(level: number, xp: number): Promise<void> {
+    try {
+      await fetch(`http://localhost:8000/profile/update_progress/${this.sharedService.username()}/${xp}/${level}`);
+    } catch (err) { console.error('Failed to save progress:', err) }
   }
 
   updateVzorChoices(selectedRod: string | undefined) {

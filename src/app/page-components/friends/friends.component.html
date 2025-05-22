@@ -24,7 +24,7 @@
                         <img [src]="user.profilePic" alt="profile_picture">
                         <div class="subConCon">
                             <p class="name">{{ user.username }}</p>
-                            <p class="lvl">Úroveň: {{ user.level }}</p>
+                            <p class="lvl">Level: {{ user.level }}</p>
                         </div>
                     </div>
                     @if (!user.nonFriend) { <div (click)="sendRequest(user.username)" class="actionBtn send" [ngClass]="{ 'nonActive': user.recentlySent}">Poslat žádost</div> }
@@ -63,7 +63,7 @@
                                 <img [src]="friend.profilePic" alt="profile_picture">
                                 <div class="subConCon">
                                     <p class="name">{{ friend.username }}</p>
-                                    <p class="lvl">Úroveň: {{ friend.level }}</p>
+                                    <p class="lvl">Level: {{ friend.level }}</p>
                                 </div>
                             </div>
                             <div class="actionBtn remove" (click)="removeFriend(friend.username)">Odebrat přítele</div>
@@ -78,7 +78,7 @@
                                 <img [src]="request.profilePic" alt="profile_picture">
                                 <div class="subConCon">
                                     <p class="name">{{ request.username }}</p>
-                                    <p class="lvl">Úroveň: {{ request.level }}</p>
+                                    <p class="lvl">Level: {{ request.level }}</p>
                                 </div>
                             </div>
                             <div class="actionBtn accept" (click)="acceptRequest(request.username)">Přijmout</div>
