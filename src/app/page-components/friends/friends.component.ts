@@ -19,6 +19,7 @@ interface User {
   level: number;
   nonFriend: boolean;
   recentlySent: boolean;
+  visible: boolean;
 }
 
 @Component({
@@ -51,28 +52,56 @@ export class FriendsComponent implements OnInit {
   async updateFriendsList() {
     this.friendsList.set([]);
     try {
+      // Skip API calls during server-side rendering
+      if (typeof window === 'undefined') {
+        return;
+      }
+      
       const response = await fetch(`http://localhost:8000/profile/get-friends/${this.sharedService.username()}`);
       const data = await response.json();
 
-      for (const userObj of data) {
-        this.friendsList.update(currentList => [...currentList, {
-          username: userObj.username,
-          profilePic: userObj.profile_picture,
-          level: userObj.level,
-          visible: true,
-        }]);
-      }
+      // Check if data is an array before iterating
+      if (Array.isArray(data)) {
+        for (const userObj of data) {
+          this.friendsList.update(currentList => [...currentList, {
+            username: userObj.username || 'Unknown',
+            profilePic: userObj.profile_picture || '',
+            level: userObj.level || 1,
+            visible: true,
+          }]);
+        }
 
-      this.makeFriendsPages(this.friendsList());
-      
-    } catch (err) {console.error(err) }
+        this.makeFriendsPages(this.friendsList());
+      } else {
+        console.error('Expected an array but got:', typeof data);
+      }
+    } catch (err) {
+      console.error('Error fetching friends list:', err);
+    }
   }
 
   async updateRequestsList() {
     this.requestsList.set([]);
     try {
+      // Skip API calls during server-side rendering
+      if (typeof window === 'undefined') {
+        return;
+      }
+      
       const response = await fetch(`http://localhost:8000/profile/usernames-levels-pictures`);
+      
+      // Check if response is ok
+      if (!response.ok) {
+        throw new Error(`HTTP error! Status: ${response.status}`);
+      }
+      
       const allUsers = await response.json();
+      
+      // Check if allUsers is an array before proceeding
+      if (!Array.isArray(allUsers)) {
+        console.error('Expected an array of users but got:', typeof allUsers);
+        return;
+      }
       
       const requestsUsernames = this.sharedService.requests();
       
@@ -83,9 +112,9 @@ export class FriendsComponent implements OnInit {
       for (const user of allUsers) {
         if (requestsUsernames.includes(user.username)) {
           this.requestsList.update(currentList => [...currentList, {
-            username: user.username,
-            profilePic: user.profile_picture,
-            level: user.level,
+            username: user.username || 'Unknown',
+            profilePic: user.profile_picture || '',
+            level: user.level || 1,
             visible: true,
           }]);
         }
@@ -147,10 +176,12 @@ export class FriendsComponent implements OnInit {
           profilePic: user.profile_picture,
           level: user.level,
           nonFriend: (friendUsernames.includes(user.username) || user.username === currentUsername),
-          recentlySent: false
+          recentlySent: false,
+          visible: true
         }));
       
       this.foundUsers.set(matchedUsers);
+      this.makeUsersPages(this.foundUsers());
       
     } catch (err) {
       console.error('Error searching for users:', err);
@@ -168,9 +199,43 @@ export class FriendsComponent implements OnInit {
 
   pageNum: number = 0;
   requestsPageNum: number = 0;
-  itemsPerPage: number = 9;
+  usersPageNum: number = 0;
+  itemsPerPage: number = 0;
+
+  updateLayoutBasedOnScreenSize(): void {
+    // Skip during server-side rendering
+    if (typeof window === 'undefined') {
+      return;
+    }
+    
+    const screenWidth = window.innerWidth;
+    const screenHeight = window.innerHeight;
+    
+    // Default: 3x3 grid (9 items)
+    let columns = 3;
+    let rows = 3;
+    
+    // Adjust columns based on width
+    if (screenWidth < 550) {
+      columns = 1; // 1 column for very small screens
+    } else if (screenWidth < 1110) {
+      columns = 2; // 2 columns for medium screens
+    }
+    
+    // Adjust rows based on height
+    if (screenHeight < 715) {
+      rows = 2; // Reduce rows when height is constrained
+    }
+    
+    // Calculate new items per page
+    console.log(rows)
+    console.log(columns);
+    this.itemsPerPage = columns * rows;
+    console.log(this.itemsPerPage);
+  }
 
   makeFriendsPages(list: any[]) {
+    this.updateLayoutBasedOnScreenSize();
     if (!list || list.length === 0) return;
     
     const updatedList = list.map((item, index) => {
@@ -185,6 +250,7 @@ export class FriendsComponent implements OnInit {
   }
 
   makeRequestsPages(list: any[]) {
+    this.updateLayoutBasedOnScreenSize();
     if (!list || list.length === 0) return;
     
     const updatedList = list.map((item, index) => {
@@ -198,7 +264,22 @@ export class FriendsComponent implements OnInit {
     this.requestsList.set(updatedList);
   }
 
-  switchPage(direction: boolean, list: any[]) {
+  makeUsersPages(list: any[]) {
+    this.updateLayoutBasedOnScreenSize();
+    if (!list || list.length === 0) return;
+    
+    const updatedList = list.map((item, index) => {
+      return {
+        ...item,
+        visible: index < this.itemsPerPage
+      };
+    });
+    
+    this.usersPageNum = 0;
+    this.foundUsers.set(updatedList);
+  }
+
+  switchPage(direction: boolean, list: any[], users: boolean) {
     const totalPages = Math.ceil(list.length / this.itemsPerPage);
     
     if (direction) {
@@ -226,7 +307,8 @@ export class FriendsComponent implements OnInit {
       };
     });
     
-    this.friendsList.set(updatedList);
+    if (users) this.foundUsers.set(updatedList);
+    else this.friendsList.set(updatedList);
   }
 
   getTotalPages(): number {

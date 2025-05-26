@@ -1,6 +1,8 @@
-<button mat-icon-button class="returnBtn" (click)="returnBack()">
-    <mat-icon style="width: 24px; height: 24px; font-size: 24px; padding: 0;">arrow_back</mat-icon>
-</button>
+<div class="returnBtn">
+    <button mat-icon-button (click)="returnBack()">
+        <mat-icon style="width: 24px; height: 24px; font-size: 24px; padding: 0;">arrow_back</mat-icon>
+    </button>
+</div>
 
 @if (mode == 'custom') {
     <div class="container2">
@@ -20,11 +22,11 @@
         <div class="sentenceCon">
             @for (word of wordsArray(); track $index) {
                 <div class="wordCon" [ngClass]="{
-                                        'selectableWord': word.type === 1 || word.type === 2,
-                                        'interpunkce': word.value === ',' || word.value === '.' || word.value === '!' || word.value === '?',
-                                        'correctWord': answersSubmitted && word.score === 1,
-                                        'incorrectWord': answersSubmitted && (!word.score || word.score < 1),
-                                     }">
+                    'selectableWord': word.type === 1 || word.type === 2,
+                    'interpunkce': word.value === ',' || word.value === '.' || word.value === '!' || word.value === '?',
+                    'correctWord': answersSubmitted && word.score === 1,
+                    'incorrectWord': answersSubmitted && (!word.score || word.score < 1),
+                }">
                     <p (click)="selectWord(word)">{{ word.value }}</p>
                 </div>
             }
@@ -34,7 +36,7 @@
         </button>
         <div class="concon">
             @if (clickedWordType == 1) {
-                <p class="clickedWord">{{ clickedWord }}</p>
+                <p class="clickedWord">{{ clickedWordDisplay }}</p>
                 <div class="choicesCon">
                     @for (selection of typeOneChoices(); track $index) {
                         <div class="conconcon" [ngClass]="selection.class">
@@ -54,7 +56,7 @@
                 </div>
             }
             @else if (clickedWordType == 2) {
-                <p class="clickedWord">{{ clickedWord }}</p>
+                <p class="clickedWord">{{ clickedWordDisplay }}</p>
                 <div class="choicesCon">
                     @for (selection of typeTwoChoices(); track $index) {
                         <div class="conconcon" [ngClass]="selection.class">

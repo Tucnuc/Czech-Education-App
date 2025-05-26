@@ -2,7 +2,7 @@
     <app-lexicon [mode]="selectedMode" (returnEvent)="lexiconActive = $event"></app-lexicon>
 }
 @else {
-    <div class="container">
+    <div class="container" #container>
         <div class="textCon">
             <p class="friendsCount">Přátelé ({{ friends.length }})</p>
             <a [routerLink]="'/friends'">Všichni Přátelé</a>

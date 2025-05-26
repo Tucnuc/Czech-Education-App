@@ -15,6 +15,7 @@ interface Word {
   selectedChoices?: { [key: string]: string | number };
   correctChoices?: { [key: string]: boolean };
   score?: number;
+  isPartOfSelected?: boolean;
 }
 
 interface Choice {
@@ -93,14 +94,14 @@ export class Training2Component implements OnInit {
       class: 'medium'
     },
     {
-      value: 'Rod',
+      value: 'Slovesný rod',
       choices: ['-', 'Činný', 'Nečinný'],
       class: 'medium'
     },
   ]);
 
-  unformattedArray = {};
-  veta = 'Kocour leze oknem, pes dírou.';
+  unformattedArray: { [key: string]: { [key: string]: string | number } } = {};
+  veta: string = '';
 
   ngOnInit(): void {
     console.log(this.mode);
@@ -119,6 +120,7 @@ export class Training2Component implements OnInit {
       const response = await fetch(`http://localhost:8000/generate/${this.mode}`);
       const data = await response.json();
       console.log(data)
+      this.veta = data.sentence;
       this.formatSentence(data.morph);
     } catch (err) {
       console.error(`Attempt ${retryCount + 1} failed:`, err);
@@ -143,61 +145,118 @@ export class Training2Component implements OnInit {
       const response = await fetch(`http://localhost:8000/morph/${encodeURIComponent(sentence)}`);
       const data = await response.json();
       console.log(data);
-      return data;
+      this.veta = data.sentence;
+      return data.morph;
     } catch (err) {
       console.error(err);
       return {};
     }
   }
 
-  formatSentence(sentence: {[key: string]: {[key: string]: string | number}}) {
+  formatSentence(morphData: {[key: string]: {[key: string]: string | number}}) {
     this.wordsArray.set([]);
-    for (const [key, value] of Object.entries(sentence)) {
-      const keys = Object.keys(value);
-      if (keys.includes('Pád')) { // Podstatné jméno
-        this.wordsArray.update((words) => [
+    this.unformattedArray = morphData;
+    const sentence = this.veta;
+    
+    // Split the sentence into words
+    const words = sentence.split(/\s+/);
+    
+    // Process each word from the sentence
+    for (const word of words) {
+      let wordWithoutPunctuation = word.replace(/[.,!?;:]/g, '');
+      let punctuation = word.match(/[.,!?;:]/g);
+      
+      // Check if this word is in morphData directly
+      if (morphData[wordWithoutPunctuation]) {
+        // Word exists directly in morphData
+        const data = morphData[wordWithoutPunctuation];
+        let type = this.determineWordType(data);
+        
+        this.wordsArray.update(words => [
           ...words,
-          {
-            value: key,
-            type: 1,
-            data: {
-              Pád: value['Pád'],
-              Číslo: value['Číslo'],
-              Rod: value['Rod'],
-              Vzor: value['Vzor']
+          { value: wordWithoutPunctuation, type, data }
+        ]);
+      } else {
+        // Check if this word is part of a combined form
+        let foundInCombined = false;
+        
+        for (const [morphKey, morphValue] of Object.entries(morphData)) {
+          if (morphKey.includes(wordWithoutPunctuation) && morphKey.includes(' ')) {
+            // This word is part of a combined form
+            const parts = morphKey.split(' ');
+            if (parts.includes(wordWithoutPunctuation)) {
+              let type = this.determineWordType(morphValue);
+              
+              this.wordsArray.update(words => [
+                ...words,
+                { value: wordWithoutPunctuation, type, data: morphValue }
+              ]);
+              
+              foundInCombined = true;
+              break;
             }
           }
-        ])
+        }
+        
+        if (!foundInCombined) {
+          // Word not found in morphData
+          this.wordsArray.update(words => [
+            ...words,
+            { value: wordWithoutPunctuation, type: 3, data: {} }
+          ]);
+        }
       }
-
-      else if (Object.keys(value).length == 0) { // Nic
-        this.wordsArray.update((words) => [
+      
+      // Add punctuation as a separate word if it exists
+      if (punctuation && punctuation.length > 0) {
+        this.wordsArray.update(words => [
           ...words,
-          { value: key, type: 3, data: {} }
-        ])
-      }
-
-      else { // Sloveso
-        this.wordsArray.update((words) => [
-          ...words,
-          {
-            value: key,
-            type: 2,
-            data: {
-              Osoba: value['Osoba'],
-              Číslo: value['Číslo'],
-              Čas: value['Čas'],
-              Způsob: value['Způsob'],
-              Vid: value['Vid'],
-              Rod: value['Slovesný rod']
-            }
-          }
-        ])
+          { value: punctuation[0], type: 3, data: {} }
+        ]);
       }
     }
+    
     this.alreadyRequesting = false;
   }
 
+  // Helper method to determine word type based on morphological data
+  determineWordType(data: {[key: string]: string | number}): number {
+    const keys = Object.keys(data);
+    
+    if (keys.includes('Pád')) {
+      return 1; // Noun or adjective (type 1)
+    } else if (keys.includes('Vid') || keys.includes('Čas') || keys.includes('Osoba')) {
+      // Special handling for infinitive forms - if verb has ONLY Vid and nothing else important
+      if (keys.includes('Vid') && 
+          !keys.includes('Čas') && 
+          !keys.includes('Osoba') && 
+          !keys.includes('Způsob') && 
+          !keys.includes('Rod')) {
+        // Clear all data for infinitive verbs
+        Object.keys(data).forEach(key => {
+          delete data[key];
+        });
+        return 2; // Still mark as verb (type 2) but with no data
+      }
+
+
+      // For verbs, rename 'Rod' to 'Slovesný rod' to avoid confusion with noun gender
+      if (keys.includes('Rod')) {
+        // Create a copy of the data object
+        const modifiedData = {...data};
+        // Set the 'Slovesný rod' property to the value of 'Rod'
+        modifiedData['Slovesný rod'] = modifiedData['Rod'];
+        // Delete the original 'Rod' property
+        delete modifiedData['Rod'];
+        // Assign the modified data back
+        Object.assign(data, modifiedData);
+      }
+      return 2; // Verb (type 2)
+    } else {
+      return 3; // Other (type 3)
+    }
+  }
+  
   @ViewChild('inputElement') inputElement!: ElementRef<HTMLInputElement>;
 
   async onSubmit() {
@@ -240,20 +299,88 @@ export class Training2Component implements OnInit {
   }
 
   getSavedChoice(category: string): string | number | undefined {
-    const existingChoice = this.savedChoices.find(choice => choice.word === this.clickedWord);
-    return existingChoice?.data[category];
+    if (this.clickedWord === this.clickedWordDisplay) {
+      const existingChoice = this.savedChoices.find(choice => choice.word === this.clickedWord);
+      return existingChoice?.data[category];
+    } else {
+      // For multi-word expressions - find appropriate choice based on the display value
+      const isMultiWord = this.clickedWordDisplay.includes(' ');
+      
+      if (isMultiWord) {
+        // If this is a multi-word, find choices for any part of the multi-word
+        // First check if we have a choice for the full multi-word expression
+        let existingChoice = this.savedChoices.find(choice => choice.word === this.clickedWordDisplay);
+        
+        // If not found and this is a specific part of a multi-word, look for choices for any part
+        if (!existingChoice) {
+          // Look for choices made for any part of this multi-word
+          const parts = this.clickedWordDisplay.split(' ');
+          for (const part of parts) {
+            existingChoice = this.savedChoices.find(choice => choice.word === part);
+            if (existingChoice) break;
+          }
+        }
+        
+        // If we found a choice for any part of the multi-word, use that
+        return existingChoice?.data[category];
+      }
+      
+      return undefined;
+    }
   }
 
+  clickedWordDisplay: string = '';
   resetVariables() {
     this.clickedWordType = 0;
     this.clickedWord = '';
+    this.clickedWordDisplay = '';
     this.savedChoices = [];
   }
 
   selectWord(word: Word) {
     if (word.type === 3) return;
-    this.clickedWordType = word.type;
-    this.clickedWord = word.value;
+    
+    // Look for multi-word expressions containing this word
+    let multiWordKey: string | null = null;
+    let multiWordValue: any = null;
+    
+    // Iterate through morphData to find multi-word expressions
+    for (const [morphKey, morphValue] of Object.entries(this.unformattedArray)) {
+      if (morphKey.includes(' ') && morphKey.split(' ').includes(word.value)) {
+        multiWordKey = morphKey;
+        multiWordValue = morphValue;
+        break;
+      }
+    }
+    
+    if (multiWordKey) {
+      // If it's part of a multi-word expression, use the full expression as clickedWord
+      this.clickedWordType = word.type;
+      this.clickedWord = word.value;
+      this.clickedWordDisplay = multiWordKey;
+      
+      // Highlight all words in the multi-word expression
+      const multiWordArray = multiWordKey.split(' ');
+      this.wordsArray.update(words => 
+        words.map(w => ({
+          ...w,
+          isPartOfSelected: multiWordArray.includes(w.value)
+        }))
+      );
+    } else {
+      // Normal single-word behavior
+      this.clickedWordType = word.type;
+      this.clickedWord = word.value;
+      this.clickedWordDisplay = word.value;
+      
+      // Clear any multi-word highlighting
+      this.wordsArray.update(words => 
+        words.map(w => ({
+          ...w,
+          isPartOfSelected: w.value === word.value
+        }))
+      );
+    }
   }
 
   answersSubmitted: boolean = false;
@@ -343,6 +470,40 @@ export class Training2Component implements OnInit {
                 : w
             )
           );
+
+          // Now check if this word is part of a multi-word expression
+          // If so, apply the same score and evaluation results to all parts
+          for (const [morphKey, morphValue] of Object.entries(this.unformattedArray)) {
+            if (morphKey.includes(' ') && morphKey.split(' ').includes(word.value)) {
+              // This is a multi-word expression
+              const multiWordParts = morphKey.split(' ');
+              
+              // Apply results to all parts of this multi-word expression
+              for (const part of multiWordParts) {
+                if (part !== word.value) {  // Skip the word we just processed
+                  const partIndex = this.wordsArray().findIndex(w => w.value === part);
+                  
+                  if (partIndex !== -1) {
+                    // Apply the same evaluation results to this part of the multi-word
+                    this.wordsArray.update(words => 
+                      words.map((w, idx) => 
+                        idx === partIndex 
+                          ? { 
+                              ...w, 
+                              selectedChoices: savedChoice.data,
+                              correctChoices: correctAnswers,
+                              score: totalAnswered > 0 ? (totalCorrect / totalAnswered) : 0
+                            }
+                          : w
+                      )
+                    );
+                  }
+                }
+              }
+              
+              break; // Once we found a matching multi-word, no need to check others
+            }
+          }
         }
       }
       

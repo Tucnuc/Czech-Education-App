@@ -138,7 +138,19 @@ mat-form-field, .concon {
 
 .returnBtn {
     position: fixed;
-    margin: 7.5px;
+    width: 48px;
+    height: 48px;
+    background-color: var(--mat-sys-surface-variant);
+    z-index: 2;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border-bottom-right-radius: 10px;
+    border-bottom-left-radius: 10px;
+    box-sizing: border-box;
+    padding-bottom: 2px;
+    margin-left: 10px;
+    @include mat.elevation(1);
 }
 
 .interpunkce {

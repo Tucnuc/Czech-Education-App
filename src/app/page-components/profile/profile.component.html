@@ -1,7 +1,9 @@
 @if (changingData) {
-    <button mat-icon-button class="returnBtn" (click)="returnBack()">
-        <mat-icon style="width: 24px; height: 24px; font-size: 24px; padding: 0;">arrow_back</mat-icon>
-    </button>
+    <div class="returnBtn">
+        <button mat-icon-button (click)="returnBack()">
+            <mat-icon style="width: 24px; height: 24px; font-size: 24px; padding: 0;">arrow_back</mat-icon>
+        </button>
+    </div>
 }
 
 @if (changeSuccessful) { 
@@ -76,7 +78,7 @@
                         </button>
                     </div>
                     <p class="smallP">Level: {{ sharedService.level() }}</p>
-                    <p>XP: {{ sharedService.xp() + '/' + sharedService.maxXP() }}</p>
+                    <p class="smallP">XP: {{ sharedService.xp() + '/' + sharedService.maxXP() }}</p>
                 </div>
             </div>
             <hr>

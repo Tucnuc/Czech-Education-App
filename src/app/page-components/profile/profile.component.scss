@@ -28,7 +28,7 @@ p {
 .subCon {
     // @include mat.elevation(3);
     border-radius: 10px;
-    width: 600px;
+    max-width: 600px;
     gap: 25px;
     display: flex;
     flex-direction: column;
@@ -84,7 +84,19 @@ hr {
 
 .returnBtn {
     position: fixed;
-    margin: 7.5px;
+    width: 48px;
+    height: 48px;
+    background-color: var(--mat-sys-surface-variant);
+    z-index: 2;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border-bottom-right-radius: 10px;
+    border-bottom-left-radius: 10px;
+    box-sizing: border-box;
+    padding-bottom: 2px;
+    margin-left: 10px;
+    @include mat.elevation(1);
 }
 
 .mat-icon, .nextBtn{
@@ -141,7 +153,7 @@ p {
 }
 
 .announcer {
-    position: absolute;
+    position: fixed;
     font-size: 14px;
     top: 0;
     left: 75px;
@@ -153,6 +165,7 @@ p {
     background-color: #77c695;
     border-bottom-left-radius: 10px;
     border-bottom-right-radius: 10px;
+    @include mat.elevation(1);
 }
 
 .announcer svg {
@@ -162,4 +175,52 @@ p {
 .announcer p {
     color: white;
     font-size: 18px;
+}
+
+@media only screen and (max-width: 950px) {
+    .returnBtn {
+        margin-left: 60px;
+    }
+
+    .announcer {
+        left: 120px;
+    }
+}
+
+@media only screen and (max-width: 615px) {
+    .otherSettings {
+        gap: 30px;
+    }
+
+    .profileCon {
+        flex-direction: column;
+        gap: 30px;
+    }
+
+    hr {
+        width: 275px;
+    }
+
+    .subConCon {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        width: 263.5px; /* 310 * 0.85 */
+    }
+
+    .bigP {
+        font-size: 18.7px; /* 22 * 0.85 */
+        font-weight: 450;
+    }
+
+    .smallP {
+        font-size: 15.3px;
+        margin-block: 4.25px; /* 5 * 0.85 */
+    }
+}
+
+@media only screen and (max-width: 450px) {
+    mat-form-field, .changeHeading {
+        width: 300px;
+    }
 }

@@ -36,3 +36,19 @@ mat-sidenav, mat-sidenav-content {
 // .sidebarBtn {
 //   margin-left: 50px;
 // }
+
+.supportSidebarBtn {
+  position: absolute;
+  width: 48px;
+  height: 48px;
+  background-color: var(--mat-sys-surface-variant);
+  z-index: 2;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border-bottom-right-radius: 10px;
+  box-sizing: border-box;
+  padding-right: 2px;
+  padding-bottom: 2px;
+  @include mat.elevation(1);
+}

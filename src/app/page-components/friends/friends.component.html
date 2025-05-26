@@ -1,7 +1,9 @@
 @if (searching) {
-    <button mat-icon-button class="returnBtn" (click)="returnBack()">
-        <mat-icon>arrow_back</mat-icon>
-    </button>
+    <div class="returnBtn">
+        <button mat-icon-button (click)="returnBack()">
+            <mat-icon>arrow_back</mat-icon>
+        </button>
+    </div>
 }
 
 <div class="container">
@@ -19,16 +21,18 @@
     @if (searching) {
         <div class="friendsCon">
             @for (user of foundUsers(); track $index) {
-                <div class="friendConCon">
-                    <div class="friendCon">
-                        <img [src]="user.profilePic" alt="profile_picture">
-                        <div class="subConCon">
-                            <p class="name">{{ user.username }}</p>
-                            <p class="lvl">Level: {{ user.level }}</p>
+                @if (user.visible) {
+                    <div class="friendConCon">
+                        <div class="friendCon">
+                            <img [src]="user.profilePic" alt="profile_picture">
+                            <div class="subConCon">
+                                <p class="name">{{ user.username }}</p>
+                                <p class="lvl">Level: {{ user.level }}</p>
+                            </div>
                         </div>
+                        @if (!user.nonFriend) { <div (click)="sendRequest(user.username)" class="actionBtn send" [ngClass]="{ 'nonActive': user.recentlySent}">Poslat žádost</div> }
                     </div>
-                    @if (!user.nonFriend) { <div (click)="sendRequest(user.username)" class="actionBtn send" [ngClass]="{ 'nonActive': user.recentlySent}">Poslat žádost</div> }
-                </div>
+                }
             }
         </div>
     }
@@ -45,14 +49,14 @@
         </div>
         <div class="subCon2">
             <p>{{ displays[0] }} ({{ activeTab === 'friends' ? friendsList().length : sharedService.requests().length }})</p>
-            <mat-form-field>
+            <!-- <mat-form-field>
                 <input matInput type="search" [(ngModel)]="inputDisplay" #searchFriendsInput
                     (input)="searchFriends(searchFriendsInput.value)" [disabled]="sharedService.username() == 'Guest'">
                 <mat-label>Hledat {{ displays[1] }}</mat-label>
                 <button matSuffix mat-icon-button aria-label="Search" [disabled]="sharedService.username() == 'Guest'">
                     <mat-icon>search</mat-icon>
                 </button>
-            </mat-form-field>
+            </mat-form-field> -->
         </div>
         <div class="friendsCon">
             @if (activeTab === 'friends') {
@@ -91,12 +95,23 @@
     }
 
     <div class="paginatorCon">
-        <button mat-icon-button (click)="switchPage(false, friendsList())" [disabled]="pageNum === 0">
-            <mat-icon>chevron_left</mat-icon>
-        </button>
-        <p>{{ pageNum + 1 }}</p>
-        <button mat-icon-button (click)="switchPage(true, friendsList())" [disabled]="pageNum >= getTotalPages() - 1">
-            <mat-icon>chevron_right</mat-icon>
-        </button>
+        @if (searching) {
+            <button mat-icon-button (click)="switchPage(false, foundUsers(), true)" [disabled]="pageNum === 0">
+                <mat-icon>chevron_left</mat-icon>
+            </button>
+            <p>{{ pageNum + 1 }}</p>
+            <button mat-icon-button (click)="switchPage(true, foundUsers(), true)" [disabled]="pageNum >= getTotalPages() - 1">
+                <mat-icon>chevron_right</mat-icon>
+            </button>
+        }
+        @else {
+            <button mat-icon-button (click)="switchPage(false, friendsList(), false)" [disabled]="pageNum === 0">
+                <mat-icon>chevron_left</mat-icon>
+            </button>
+            <p>{{ pageNum + 1 }}</p>
+            <button mat-icon-button (click)="switchPage(true, friendsList(), false)" [disabled]="pageNum >= getTotalPages() - 1">
+                <mat-icon>chevron_right</mat-icon>
+            </button>
+        }
     </div>
 </div>

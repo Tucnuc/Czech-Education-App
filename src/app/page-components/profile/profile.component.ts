@@ -50,6 +50,7 @@ export class ProfileComponent {
 
   returnBack() {
     this.changingData = false;
+    this.changeSuccessful = false;
   }
 
   changingData: boolean = false;

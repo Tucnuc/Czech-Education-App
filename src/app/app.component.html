@@ -1,16 +1,25 @@
+<div *ngIf="!sidenavOpened && mode" class="supportSidebarBtn" #supportBtn [ngStyle]="{'display': displayVariable ? 'flex' : 'none'}">
+    <button mat-icon-button (click)="secondSomething()">
+        <mat-icon>menu</mat-icon>
+    </button>
+</div>
+
 <mat-sidenav-container>
 
-    <mat-sidenav opened mode="side" [style.width]="sidebarWidth()">
+    <mat-sidenav #sidenav [opened]="mode ? state : true" [mode]="mode ? 'over' : 'side'"
+    [style.width]="mode ? '275px' : sidebarWidth()" (openedChange)="sidenavOpened = $event">
         <div class="headerContainer" [ngStyle]="{'justify-content': (collapsed()) ? 'center' : 'space-around'}">
             <h2 [@fading]="(collapsed()) ? 'collapsed' : 'expanded'" [class.hideText]="collapsed()">Praotec Čech</h2>
-            <button class="sidebarBtn" mat-icon-button (click)="collapsed.set(!collapsed())">
-                <mat-icon>menu</mat-icon>
-            </button>
+            @if (!mode) {
+                <button class="sidebarBtn" mat-icon-button (click)="collapsed.set(!collapsed())">
+                    <mat-icon>menu</mat-icon>
+                </button>
+            }
         </div>
         <app-sidebar-content [collapsed]="collapsed()"></app-sidebar-content>
     </mat-sidenav>
 
-    <mat-sidenav-content [style.margin-left]="sidebarWidth()">
+    <mat-sidenav-content [style.margin-left]="mode ? 0 : sidebarWidth()">
         <router-outlet></router-outlet>
     </mat-sidenav-content>
 

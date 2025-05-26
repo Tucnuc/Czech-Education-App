@@ -11,7 +11,7 @@
 
 .friends {
     display: flex;
-    gap: 15px;
+    gap: 5px;
     width: 885px;
 }
 
@@ -20,6 +20,7 @@
     flex-direction: column;
     align-items: center;
     position: relative;
+    width: 95px;
 }
 
 img {
@@ -104,4 +105,42 @@ a:hover {
     font-weight: 500;
     margin-bottom: 10px;
     text-align: center;
+}
+
+// MEDIA QUERIES
+@media only screen and (max-width: 1200px) {
+    .friends {
+        width: 595px;
+    }
+
+    .textCon {
+        width: 595px;
+    }
+
+    hr {
+        width: 605px;
+    }
+}
+
+@media only screen and (max-width: 660px), (max-height: 550px) {
+    .container {
+        height: auto;
+        padding-bottom: 25px;
+        padding-top: 60px;
+    }
+    
+    .lexiconCon {
+        flex-direction: column;
+        gap: 30px;
+    }
+
+    .friends {
+        width: 295px;
+    }
+    .textCon {
+        width: 295px;
+    }
+    hr {
+        width: 302.5px;
+    }
 }

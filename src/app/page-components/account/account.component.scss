@@ -1,3 +1,5 @@
+@use '@angular/material' as mat;
+
 .container {
     display: flex;
     flex-direction: column;
@@ -84,7 +86,7 @@ img {
 }
 
 .announcer {
-    position: absolute;
+    position: fixed;
     font-size: 14px;
     top: 0;
     left: 50px;
@@ -96,6 +98,7 @@ img {
     background-color: #77c695;
     border-bottom-left-radius: 10px;
     border-bottom-right-radius: 10px;
+    @include mat.elevation(1);
 }
 
 .announcer svg {
@@ -109,4 +112,42 @@ img {
 
 .error {
     color: #fb5751;
+}
+
+
+@media only screen and (max-width: 950px) {
+    .announcer {
+        left: 60px;
+    }
+}
+
+@media only screen and (max-width: 500px) {
+    .heading {
+        width: 270px;
+        font-size: 2rem;
+    }
+
+    .subHeading {
+        width: 270px;
+    }
+
+    mat-form-field {
+        width: 275px;
+    }
+
+    hr {
+        width: 280px;
+    }
+
+    img {
+        margin-left: 5px;
+    }
+}
+
+@media only screen and (max-height: 680px) {
+    .container {
+        height: auto;
+        margin-top: 60px;
+        margin-bottom: 25px;
+    }
 }
