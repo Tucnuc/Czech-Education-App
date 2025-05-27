@@ -43,7 +43,7 @@ export class HomeComponent implements OnInit {
         for (const userObj of data) {
           this.friends.push({
             username: userObj.username || 'Unknown',
-            profilePic: userObj.profile_picture || '',
+            profilePic: `http://localhost:8000/profile-images/${userObj.profile_picture}` || '',
             level: userObj.level || 1,
           });
         }

@@ -162,7 +162,7 @@ export class SharedService {
       
       this.accountInfoSignal.update(current => ({
         ...current,
-        profilePicture: data.profile_picture,
+        profilePicture: `http://localhost:8000/profile-images/${data.profile_picture}`,
         darkmode: data.darkmode,
         requests: data.friends_requests,
         level: data.level,

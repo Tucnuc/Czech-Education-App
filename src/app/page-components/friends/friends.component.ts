@@ -65,7 +65,7 @@ export class FriendsComponent implements OnInit {
         for (const userObj of data) {
           this.friendsList.update(currentList => [...currentList, {
             username: userObj.username || 'Unknown',
-            profilePic: userObj.profile_picture || '',
+            profilePic: `http://localhost:8000/profile-images/${userObj.profile_picture}` || '',
             level: userObj.level || 1,
             visible: true,
           }]);
@@ -113,7 +113,7 @@ export class FriendsComponent implements OnInit {
         if (requestsUsernames.includes(user.username)) {
           this.requestsList.update(currentList => [...currentList, {
             username: user.username || 'Unknown',
-            profilePic: user.profile_picture || '',
+            profilePic: `http://localhost:8000/profile-images/${user.profile_picture}` || '',
             level: user.level || 1,
             visible: true,
           }]);
@@ -173,7 +173,7 @@ export class FriendsComponent implements OnInit {
         )
         .map((user: any) => ({
           username: user.username,
-          profilePic: user.profile_picture,
+          profilePic: `http://localhost:8000/profile-images/${user.profile_picture}`,
           level: user.level,
           nonFriend: (friendUsernames.includes(user.username) || user.username === currentUsername),
           recentlySent: false,

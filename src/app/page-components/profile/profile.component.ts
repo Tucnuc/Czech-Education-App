@@ -32,9 +32,8 @@ export class ProfileComponent {
   }
 
   async toggleDarkMode() {
-    const newDarkModeValue = !this.sharedService.darkmode();
-    this.darkMode = newDarkModeValue;
-    this.sharedService.updateAccountInfo({ darkmode: newDarkModeValue });
+    this.sharedService.updateAccountInfo({ darkmode: !this.sharedService.darkmode() });
+    this.darkMode = this.sharedService.darkmode();
     try {
       await fetch(`http://localhost:8000/profile/darkmode/${this.sharedService.username()}/${this.sharedService.darkmode()}`); 
     } catch (err) { console.error(err) }
@@ -158,5 +157,55 @@ export class ProfileComponent {
     } catch (err) { console.error(err) }
   }
 
-  // Dodělat změny username + password
+  uploadPP(username: string, file: File) {
+    if (!file) {
+      console.error('No file selected');
+      return;
+    }
+    
+    const reader = new FileReader();
+    reader.readAsArrayBuffer(file);
+    reader.onload = () => {
+      if (!reader.result) {
+        console.error('Failed to read file');
+        return;
+      }
+      
+      // Explicitly cast reader.result to ArrayBuffer
+      const arrayBuffer = reader.result as ArrayBuffer;
+      const bytes = new Uint8Array(arrayBuffer);
+      const filetype = "." + file.type.split('/')[1]; // get file type from file name
+      
+      fetch(`http://localhost:8000/profile/change-profile-picture`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          username: username,
+          file: Array.from(bytes),
+          filetype: filetype
+        })
+      })
+      .then(response => {
+        if (!response.ok) {
+          throw new Error('Network response was not ok');
+        }
+        return response.json();
+      })
+      .then(data => {
+        console.log('Profile picture updated successfully');
+        this.sharedService.updateAccountInfo({ profilePicture: `http://localhost:8000/profile-images/${data.profile_picture}` });
+        window.location.reload();
+        return data;
+      })
+      .catch(error => {
+        console.error('Error updating profile picture:', error);
+      });
+    };
+    
+    reader.onerror = (error) => {
+      console.error('Error reading file:', error);
+    };
+  }
 }

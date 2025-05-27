@@ -114,6 +114,8 @@ export class AccountComponent implements OnInit {
       this.checks.loginName = false;
       this.checks.loginPass = false;
 
+      if (this.name == '' || this.password == '') return;
+
       try {
         const response: any = await fetch(`http://localhost:8000/profile/login/${this.name}/${this.password}`);
         const data = await response.json();
@@ -125,7 +127,7 @@ export class AccountComponent implements OnInit {
 
         const formattedData: Account = {
           username: data.username,
-          profilePicture: data.profile_picture,
+          profilePicture: `http://localhost:8000/profile-images/${data.profile_picture}`,
           darkmode: data.darkmode,
           requests: data.friends_requests,
           level: data.level,
@@ -145,7 +147,6 @@ export class AccountComponent implements OnInit {
     try {
       const response = await fetch(`http://localhost:8000/profile/usernames`);
       const data = await response.json();
-      console.log(data)
       this.usernames = data;
     } catch (err) {
       console.error(err);
