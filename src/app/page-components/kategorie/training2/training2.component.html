@@ -24,8 +24,9 @@
                 <div class="wordCon" [ngClass]="{
                     'selectableWord': word.type === 1 || word.type === 2,
                     'interpunkce': word.value === ',' || word.value === '.' || word.value === '!' || word.value === '?',
-                    'correctWord': answersSubmitted && word.score === 1,
-                    'incorrectWord': answersSubmitted && (!word.score || word.score < 1),
+                    'correctWord': (word.type === 1 || word.type === 2) && answersSubmitted && word.score === 1,
+                    'partiallyCorrectWord': (word.type === 1 || word.type === 2) && answersSubmitted && (word.score && word.score < 1 && word.score > 0),
+                    'incorrectWord': (word.type === 1 || word.type === 2) && answersSubmitted && (!word.score || word.score == 0),
                 }">
                     <p (click)="selectWord(word)">{{ word.value }}</p>
                 </div>
@@ -40,7 +41,14 @@
                 <div class="choicesCon">
                     @for (selection of typeOneChoices(); track $index) {
                         <div class="conconcon" [ngClass]="selection.class">
-                            @if (answersSubmitted) { <p class="shortcut">{{ getCorrectValue(clickedWord, selection.value) }}</p> }
+                            @if (answersSubmitted) {
+                                <p class="shortcut" [ngClass]="{
+                                    'correct': getCorrectValue(clickedWord, selection.value).toLowerCase().trim() === (getSavedChoice(selection.value) + '').toLowerCase().trim(),
+                                    'incorrect': getCorrectValue(clickedWord, selection.value).toLowerCase().trim() !== (getSavedChoice(selection.value) + '').toLowerCase().trim(),
+                                }">
+                                    {{ getCorrectValue(clickedWord, selection.value) }}
+                                </p>
+                            }
                             <mat-form-field [className]="selection.class">
                                 <mat-label>{{ selection.value }}</mat-label>
                                 <mat-select (selectionChange)="saveChoices($event, selection)"
@@ -60,7 +68,14 @@
                 <div class="choicesCon">
                     @for (selection of typeTwoChoices(); track $index) {
                         <div class="conconcon" [ngClass]="selection.class">
-                            @if (answersSubmitted) { <p class="shortcut">{{ getCorrectValue(clickedWord, selection.value) }}</p> }
+                            @if (answersSubmitted) {
+                                <p class="shortcut" [ngClass]="{
+                                    'correct': getCorrectValue(clickedWord, selection.value).toLowerCase().trim() === (getSavedChoice(selection.value) + '').toLowerCase().trim(),
+                                    'incorrect': getCorrectValue(clickedWord, selection.value).toLowerCase().trim() !== (getSavedChoice(selection.value) + '').toLowerCase().trim(),
+                                }">
+                                    {{ getCorrectValue(clickedWord, selection.value) }}
+                                </p>
+                            }
                             <mat-form-field [className]="selection.class">
                                 <mat-label>{{ selection.value }}</mat-label>
                                 <mat-select (selectionChange)="saveChoices($event, selection)"

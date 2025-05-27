@@ -67,5 +67,23 @@ h1 {
 .disabledBtn {
     cursor: not-allowed;
     border: solid var(--mat-sys-outline-variant) 2px !important;
-    background-color: #dddddd;
+    background-color: var(--mat-sys-surface-variant);
+}
+
+@media only screen and (max-width: 630px) {
+    .container {
+        height: auto;
+        padding-block: 25px;
+    }
+
+    .modeContainer, .diffContainer {
+        flex-direction: column;
+    }
+}
+
+@media only screen and (max-height: 500px) {
+    .container {
+        height: auto;
+        padding-block: 25px;
+    }
 }

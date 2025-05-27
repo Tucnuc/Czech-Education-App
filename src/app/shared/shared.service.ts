@@ -1,5 +1,5 @@
-import { Injectable, PLATFORM_ID, Inject, signal, computed, Signal } from '@angular/core';
-import { isPlatformBrowser } from '@angular/common';
+import { Injectable, PLATFORM_ID, Inject, signal, computed, Signal, effect } from '@angular/core';
+import { DOCUMENT, isPlatformBrowser } from '@angular/common';
 
 interface Account {
   username: string;
@@ -46,10 +46,24 @@ export class SharedService {
   // Signal pro celý objekt účtu
   readonly accountInfo: Signal<Account> = this.accountInfoSignal.asReadonly();
 
-  constructor(@Inject(PLATFORM_ID) platformId: Object) {
+  constructor(@Inject(PLATFORM_ID) platformId: Object, @Inject(DOCUMENT) private document: Document) {
     this.isBrowser = isPlatformBrowser(platformId);
     if (this.isBrowser) {
       this.loadStoredUsername();
+    }
+
+    effect(() => {
+      this.applyDarkModeClass(this.darkmode());
+    });
+  }
+
+  private applyDarkModeClass(isDarkMode: boolean): void {
+    if (this.isBrowser) {
+      if (isDarkMode) {
+        this.document.documentElement.classList.add('dark-mode');
+      } else {
+        this.document.documentElement.classList.remove('dark-mode');
+      }
     }
   }
 

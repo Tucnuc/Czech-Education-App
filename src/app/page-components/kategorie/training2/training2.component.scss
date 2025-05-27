@@ -110,6 +110,7 @@ mat-form-field, .concon1 {
     flex-wrap: wrap;
     align-items: center;
     column-gap: 5px;
+    row-gap: 15px;
 }
 
 .returnBtn {
@@ -135,8 +136,17 @@ $green: #038c38;
 .correctWord p {
     color: $green !important;
 }
+.partiallyCorrectWord p {
+    color: #f39821;
+}
 .incorrectWord p {
     color: $red !important;
+}
+.correct {
+    color: $green;
+}
+.incorrect {
+    color: $red;
 }
 
 .conconcon {
@@ -147,6 +157,59 @@ $green: #038c38;
 
 .shortcut {
     position: absolute;
-    top: -50px;
+    top: -45px;
     font-size: 20px;
+}
+
+@media only screen and (max-width: 950px) {
+    .returnBtn {
+        margin-left: 60px;
+    }
+}
+
+@media only screen and (max-width: 480px) {
+    mat-form-field {
+        width: 270px;
+    }
+    .concon1 {
+        width: 260px;
+    }
+}
+
+@media only screen and (max-width: 950px), (max-height: 800px) {
+    .container {
+        height: auto;
+        padding-top: 60px;
+        padding-bottom: 25px;
+    }
+
+    .concon {
+        position: static;
+        margin: 0;
+        margin-top: 45px;
+    }
+}
+
+@media only screen and (max-width: 500px) {
+    .concon {
+        flex-direction: column;
+        gap: 20px;
+    }
+
+    .wordCon, .clickedWord {
+        font-size: 26px;
+    }
+
+    .wordCon p {
+        margin-block: 10px;
+    }
+
+    .shortcut {
+        top: -40px;
+        font-size: 18px;
+    }
+
+    .choicesCon {
+        row-gap: 12.5px;
+    }
 }

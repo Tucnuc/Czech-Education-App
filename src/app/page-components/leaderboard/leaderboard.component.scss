@@ -67,3 +67,10 @@ p {
         width: 250px;
     }
 }
+
+@media only screen and (max-height: 650px) {
+    .container {
+        height: auto;
+        padding-block: 10px;
+    }
+}

@@ -119,7 +119,7 @@ export class Training2Component implements OnInit {
     try {
       const response = await fetch(`http://localhost:8000/generate/${this.mode}`);
       const data = await response.json();
-      console.log(data)
+      // console.log(data)
       this.veta = data.sentence;
       this.formatSentence(data.morph);
     } catch (err) {
@@ -135,6 +135,7 @@ export class Training2Component implements OnInit {
         }, retryDelay);
       } else {
         this.wordsArray.set([{ value: 'Chyba připojení k serveru', type: 10, data: {} }]);
+        this.alreadyRequesting = false;
       }
     }
   }
@@ -395,21 +396,67 @@ export class Training2Component implements OnInit {
       }
     } else {
       this.answersSubmitted = true;
+
+      // Tracking variables for XP calculations
+      let totalWords = 0;
+      let correctWords = 0;
+      let totalCorrectCategories = 0;
       
-      // Reset word scoring
+      // Reset word scoring + infinitiv
       this.wordsArray.update(words => 
         words.map(word => {
-          if (Object.keys(word.data).length === 0) {
+          // Handle infinitives - words with empty data that are type 1 (noun/adj) or 2 (verb)
+          if (Object.keys(word.data).length === 0 && (word.type === 1 || word.type === 2)) {
+            totalWords++;
+            
+            // Check if this word is part of a multi-word expression
+            let isPartOfMultiWord = false;
+            let multiWordKey = null;
+            
+            // Check if this infinitive is part of a multi-word expression
+            for (const [morphKey, morphValue] of Object.entries(this.unformattedArray)) {
+              if (morphKey.includes(' ') && morphKey.split(' ').includes(word.value)) {
+                isPartOfMultiWord = true;
+                multiWordKey = morphKey;
+                break;
+              }
+            }
+            
+            // Check if any part of a multi-word expression was selected
+            let userSelectedThisWord = false;
+            
+            if (isPartOfMultiWord && multiWordKey) {
+              const multiWordParts = multiWordKey.split(' ');
+              
+              // Check if user made a selection for any part of this multi-word
+              for (const part of multiWordParts) {
+                if (this.savedChoices.some(choice => choice.word === part)) {
+                  userSelectedThisWord = true;
+                  break;
+                }
+              }
+            } else {
+              // Regular word - check if user selected it
+              userSelectedThisWord = this.savedChoices.some(choice => choice.word === word.value);
+            }
+            
+            // If user didn't interact with this word (correct for infinitives)
+            if (!userSelectedThisWord) {
+              correctWords++;
+              return { ...word, score: 1 };
+            } else {
+              // User tried to categorize an infinitive (incorrect)
+              return { ...word, score: 0 };
+            }
+          }
+          
+          // For regular words with no data (like punctuation)
+          else if (Object.keys(word.data).length === 0) {
             return { ...word, score: 10 };
           }
           return word;
         })
       );
-      
-      // Tracking variables for XP calculations
-      let totalWords = 0;
-      let correctWords = 0;
-      let totalCorrectCategories = 0;
       
       // Process each saved choice
       for (const savedChoice of this.savedChoices) {

@@ -134,6 +134,7 @@ export class TrainingComponent implements OnInit {
         }, retryDelay);
       } else {
         this.wordsArray.set([{ value: 'Chyba připojení k serveru', type: 0 }]);
+        this.alreadyRequesting = false;
       }
     }
   }

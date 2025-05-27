@@ -130,7 +130,7 @@ mat-form-field, .concon {
     top: 45px;
 }
 .correctType {
-    color: black;
+    color: var(--mat-sys-on-background);
     font-size: 13px;
     bottom: 45px;
     position: absolute;
@@ -157,4 +157,59 @@ mat-form-field, .concon {
     cursor: default;
     color: var(--mat-sidenav-content-text-color) !important;
     margin-left: 0;
+}
+
+@media only screen and (max-width: 950px) {
+    .returnBtn {
+        margin-left: 60px;
+    }
+}
+
+@media only screen and (max-width: 480px) {
+    mat-form-field {
+        width: 270px;
+    }
+    .concon {
+        width: 260px;
+    }
+}
+
+@media only screen and (max-width: 950px), (max-height: 800px) {
+    .container {
+        height: auto;
+        padding-top: 60px;
+        padding-bottom: 25px;
+    }
+
+    .druhCon {
+        position: static;
+        margin-bottom: 0;
+    }
+}
+
+@media only screen and (max-width: 600px) {
+    .wordCon {
+        font-size: 26px;
+    }
+
+    .wordCon p {
+        margin-block: 10px;
+    }
+
+    .correctType {
+        bottom: 35px;
+    }
+
+    .shortcut {
+        top: 35px;
+    }
+
+    .druhCon {
+        font-size: 18px;
+    }
+
+    .druh {
+        padding-bottom: 8px;
+        padding-inline: 12px;
+    }
 }

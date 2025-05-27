@@ -1,7 +1,20 @@
-/* You can add global styles to this file, and also import other style files */
+@use '@angular/material' as mat;
 
 html, body { height: 100%; }
 body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
+
+html {
+  color-scheme: light;
+  @include mat.theme((
+    color: mat.$azure-palette,
+  ));
+}
+html.dark-mode {
+  color-scheme: dark;
+  @include mat.theme((
+    color: mat.$azure-palette,
+  ));
+}
 
 .mat-drawer-inner-container {
     overflow: hidden !important;
