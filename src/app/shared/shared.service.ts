@@ -155,14 +155,14 @@ export class SharedService {
    */
   async fetchUserData(username: string): Promise<void> {
     try {
-      const response = await fetch(`http://localhost:8000/profile/get-user-data/${username}`);
+      const response = await fetch(`https://code.dojc.cc/proxy/8000/profile/get-user-data/${username}`);
       const data = await response.json();
 
       const calculatedMaxXP = this.calculateMaxXP(data.level);
       
       this.accountInfoSignal.update(current => ({
         ...current,
-        profilePicture: data.profile_picture,
+        profilePicture: `https://code.dojc.cc/proxy/8000/profile-images/${data.profile_picture}`,
         darkmode: data.darkmode,
         requests: data.friends_requests,
         level: data.level,

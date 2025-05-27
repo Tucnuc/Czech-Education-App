@@ -61,7 +61,10 @@
     @else {
         <div class="subCon">
             <div class="profileCon">
-                <img [src]="sharedService.profilePicture()" class="profileImg" alt="profile image">
+                <div style="position: relative; width: 150px; height: 150px;">
+                    <img [src]="sharedService.profilePicture()" class="profileImg" alt="profile image">
+                    <input class="fileInput" type="file" #fileInput accept="image/*" (change)="fileInput.files && fileInput.files.length > 0 ? uploadPP(sharedService.username(), fileInput.files[0]) : null">
+                </div>
                 <div class="profileChangeContainer">
                     <div class="subConCon">
                         <p class="bigP">Jméno: {{ sharedService.username() }}</p>
@@ -85,7 +88,7 @@
             <div class="otherSettings">
                 <div class="darkModeCon">
                     <p>Dark Mode</p>
-                    <mat-slide-toggle [(ngModel)]="darkMode" (change)="toggleDarkMode()"></mat-slide-toggle>
+                    <mat-slide-toggle [checked]="sharedService.darkmode()" (change)="toggleDarkMode()"></mat-slide-toggle>
                 </div>
                 <button mat-raised-button (click)="navigateToLogin()">{{ (sharedService.loggedIn() ? 'Odhlásit se' : 'Přihlásit se') }}</button>
             </div>

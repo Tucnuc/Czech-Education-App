@@ -57,7 +57,7 @@ export class FriendsComponent implements OnInit {
         return;
       }
       
-      const response = await fetch(`http://localhost:8000/profile/get-friends/${this.sharedService.username()}`);
+      const response = await fetch(`https://code.dojc.cc/proxy/8000/profile/get-friends/${this.sharedService.username()}`);
       const data = await response.json();
 
       // Check if data is an array before iterating
@@ -65,7 +65,7 @@ export class FriendsComponent implements OnInit {
         for (const userObj of data) {
           this.friendsList.update(currentList => [...currentList, {
             username: userObj.username || 'Unknown',
-            profilePic: userObj.profile_picture || '',
+            profilePic: `https://code.dojc.cc/proxy/8000/profile-images/${userObj.profile_picture}` || '',
             level: userObj.level || 1,
             visible: true,
           }]);
@@ -88,7 +88,7 @@ export class FriendsComponent implements OnInit {
         return;
       }
       
-      const response = await fetch(`http://localhost:8000/profile/usernames-levels-pictures`);
+      const response = await fetch(`https://code.dojc.cc/proxy/8000/profile/usernames-levels-pictures`);
       
       // Check if response is ok
       if (!response.ok) {
@@ -113,7 +113,7 @@ export class FriendsComponent implements OnInit {
         if (requestsUsernames.includes(user.username)) {
           this.requestsList.update(currentList => [...currentList, {
             username: user.username || 'Unknown',
-            profilePic: user.profile_picture || '',
+            profilePic: `https://code.dojc.cc/proxy/8000/profile-images/${user.profile_picture}` || '',
             level: user.level || 1,
             visible: true,
           }]);
@@ -158,10 +158,10 @@ export class FriendsComponent implements OnInit {
     this.searchDisplay = input.trim();
 
     try {
-      const response = await fetch(`http://localhost:8000/profile/usernames-levels-pictures`);
+      const response = await fetch(`https://code.dojc.cc/proxy/8000/profile/usernames-levels-pictures`);
       const allUsers = await response.json();
 
-      const response2 = await fetch(`http://localhost:8000/profile/get-friends/${this.sharedService.username()}`);
+      const response2 = await fetch(`https://code.dojc.cc/proxy/8000/profile/get-friends/${this.sharedService.username()}`);
       const friends = await response2.json();
 
       const friendUsernames = friends.map((friend: any) => friend.username);
@@ -173,7 +173,7 @@ export class FriendsComponent implements OnInit {
         )
         .map((user: any) => ({
           username: user.username,
-          profilePic: user.profile_picture,
+          profilePic: `https://code.dojc.cc/proxy/8000/profile-images/${user.profile_picture}`,
           level: user.level,
           nonFriend: (friendUsernames.includes(user.username) || user.username === currentUsername),
           recentlySent: false,
@@ -317,26 +317,26 @@ export class FriendsComponent implements OnInit {
 
   async removeFriend(friend: string) {
     try {
-      await fetch(`http://localhost:8000/profile/remove-friend/${this.sharedService.username()}/${friend}`);
+      await fetch(`https://code.dojc.cc/proxy/8000/profile/remove-friend/${this.sharedService.username()}/${friend}`);
       await this.updateFriendsList();
     } catch (err) {console.error(err) }
   }
 
   async acceptRequest(user: string) {
     try {
-      await fetch(`http://localhost:8000/profile/add-friend/${this.sharedService.username()}/${user}`);
+      await fetch(`https://code.dojc.cc/proxy/8000/profile/add-friend/${this.sharedService.username()}/${user}`);
       window.location.reload();
     } catch (err) {console.error(err) }
   }
   async denyRequest(user: string) {
     try {
-      await fetch(`http://localhost:8000/profile/decline-friend-request/${this.sharedService.username()}/${user}`);
+      await fetch(`https://code.dojc.cc/proxy/8000/profile/decline-friend-request/${this.sharedService.username()}/${user}`);
       window.location.reload();
     } catch (err) {console.error(err) }
   }
   async sendRequest(user: string) {
     try {
-      const response = await fetch(`http://localhost:8000/profile/add-friend-request/${this.sharedService.username()}/${user}`);
+      const response = await fetch(`https://code.dojc.cc/proxy/8000/profile/add-friend-request/${this.sharedService.username()}/${user}`);
       if (response.ok) {
         this.foundUsers.update(users => 
           users.map(foundUser => 

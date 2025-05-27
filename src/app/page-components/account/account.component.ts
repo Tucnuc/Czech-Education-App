@@ -103,7 +103,7 @@ export class AccountComponent implements OnInit {
     if (this.register) {
       if (this.checks.nameCheck && this.checks.passwordCheck) {
         try {
-          await fetch(`http://localhost:8000/profile/register/${this.name}/${this.password}`);
+          await fetch(`https://code.dojc.cc/proxy/8000/profile/register/${this.name}/${this.password}`);
           this.recentlyRegistered = true;
           this.updatePage(true);
         } catch (err) {
@@ -114,8 +114,10 @@ export class AccountComponent implements OnInit {
       this.checks.loginName = false;
       this.checks.loginPass = false;
 
+      if (this.name == '' || this.password == '') return;
+
       try {
-        const response: any = await fetch(`http://localhost:8000/profile/login/${this.name}/${this.password}`);
+        const response: any = await fetch(`https://code.dojc.cc/proxy/8000/profile/login/${this.name}/${this.password}`);
         const data = await response.json();
         if (data.error) {
           if (data.error === 'Špatné heslo') this.checks.loginPass = true;
@@ -125,7 +127,7 @@ export class AccountComponent implements OnInit {
 
         const formattedData: Account = {
           username: data.username,
-          profilePicture: data.profile_picture,
+          profilePicture: `https://code.dojc.cc/proxy/8000/profile-images/${data.profile_picture}`,
           darkmode: data.darkmode,
           requests: data.friends_requests,
           level: data.level,
@@ -143,9 +145,8 @@ export class AccountComponent implements OnInit {
 
   async getUsernames() {
     try {
-      const response = await fetch(`http://localhost:8000/profile/usernames`);
+      const response = await fetch(`https://code.dojc.cc/proxy/8000/profile/usernames`);
       const data = await response.json();
-      console.log(data)
       this.usernames = data;
     } catch (err) {
       console.error(err);

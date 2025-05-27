@@ -117,7 +117,7 @@ export class TrainingComponent implements OnInit {
     this.wordsArray.set([{ value: 'Generování..', type: 0 }]);
 
     try {
-      const response = await fetch(`http://localhost:8000/generate/${this.mode}`);
+      const response = await fetch(`https://code.dojc.cc/proxy/8000/generate/${this.mode}`);
       const data = await response.json();
       
       this.formatSentence(data.pos);
@@ -142,7 +142,7 @@ export class TrainingComponent implements OnInit {
   async sendSentence(sentence: string): Promise<{ [key: string]: number }> {
     this.wordsArray.set([{ value: 'Načítání..', type: 0 }]);
     try {
-      const response = await fetch(`http://localhost:8000/pos/${encodeURIComponent(sentence)}`);
+      const response = await fetch(`https://code.dojc.cc/proxy/8000/pos/${encodeURIComponent(sentence)}`);
       const data = await response.json();
       console.log(data);
       return data;
@@ -294,7 +294,7 @@ export class TrainingComponent implements OnInit {
 
   async saveUserProgress(level: number, xp: number): Promise<void> {
     try {
-      await fetch(`http://localhost:8000/profile/update_progress/${this.sharedService.username()}/${xp}/${level}`);
+      await fetch(`https://code.dojc.cc/proxy/8000/profile/update_progress/${this.sharedService.username()}/${xp}/${level}`);
     } catch (err) { console.error('Failed to save progress:', err) }
   }
 

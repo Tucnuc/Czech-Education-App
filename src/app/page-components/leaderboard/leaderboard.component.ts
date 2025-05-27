@@ -16,7 +16,7 @@ export class LeaderboardComponent implements OnInit {
 
   async updateLeaderboard() {
     try {
-      const response = await fetch(`http://localhost:8000/leaderboard`); 
+      const response = await fetch(`https://code.dojc.cc/proxy/8000/leaderboard`); 
       const data = await response.json();
       const formattedData: Finalist[] = []
 

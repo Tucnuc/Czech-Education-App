@@ -35,7 +35,7 @@ export class HomeComponent implements OnInit {
         return;
       }
       
-      const response = await fetch(`http://localhost:8000/profile/get-friends/${this.sharedService.username()}`);
+      const response = await fetch(`https://code.dojc.cc/proxy/8000/profile/get-friends/${this.sharedService.username()}`);
       const data = await response.json();
 
       // Check if data is an array before iterating
@@ -43,7 +43,7 @@ export class HomeComponent implements OnInit {
         for (const userObj of data) {
           this.friends.push({
             username: userObj.username || 'Unknown',
-            profilePic: userObj.profile_picture || '',
+            profilePic: `https://code.dojc.cc/proxy/8000/profile-images/${userObj.profile_picture}` || '',
             level: userObj.level || 1,
           });
         }
